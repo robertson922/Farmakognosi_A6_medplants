@@ -938,12 +938,12 @@ function viewHome() {
       ${weakest().length ? `<div class="svaga"><b>🎯 Dina svagaste växter just nu:</b>
         ${weakest().map(id => `<button class="linkbtn" onclick="openPlant('${id}')"><i>${byId(id).latin}</i></button>`).join(', ')}
         <div class="btn-row" style="margin-top:.6rem"><button class="btn btn-main" onclick="startFokus(weakest())">Öva på dem</button>
-        <button class="btn" onclick="if(confirm('Nollställa dina resultat?')){store.set('stats',{});viewHome()}">↺ Nollställ</button></div></div>` : ''}
+        <button class="btn" onclick="if(confirm('Nollställa dina resultat?')){store.set('stats',{});store.set('qvikt',{});viewHome()}">↺ Nollställ</button></div></div>` : ''}
     </div>
     <div class="tiles">
       <button class="tile" onclick="go('fakta')"><span class="ico">📖</span><span><b>Fakta</b><span class="d">Läs om alla växter, med bilder och kemiska strukturer.</span></span></button>
       <button class="tile" onclick="go('kort')"><span class="ico">🃏</span><span><b>Faktakort</b><span class="d">Växtkort och strukturkort: tänk efter, vänd kortet och se om du hade rätt. Du kan ${known} av ${VAXTER.length} växter.</span></span></button>
-      <button class="tile" onclick="go('quiz')"><span class="ico">❓</span><span><b>Quiz</b><span class="d">10 frågor åt gången: flerval, strukturer och skriv latinska namn. Välj tema.</span></span></button>
+      <button class="tile" onclick="go('quiz')"><span class="ico">❓</span><span><b>Quiz</b><span class="d">5–20 frågor: flerval, strukturer och skriv latinska namn. Välj ett eller flera teman.</span></span></button>
       <button class="tile" onclick="go('para')"><span class="ico">🔗</span><span><b>Para ihop</b><span class="d">Para ihop växter med substanser, användning, familj eller preparat.</span></span></button>
       <button class="tile" onclick="go('bild')"><span class="ico">📷</span><span><b>Känn igen växten</b><span class="d">Vilken växt syns på bilden? Skriv det latinska namnet, exakt rätt stavat.</span></span></button>
     </div></div>`;
@@ -1228,26 +1228,67 @@ const bioInfoNamn = s => `<b>${s.namn}</b> (ur <i>${byId(s.vaxt).latin}</i>) är
 const structInfo = s => `Strukturen är <b>${s.namn}</b> ur <i>${byId(s.vaxt).latin}</i>.${bioInfo(s)}`;
 /* too general to point to one plant when there are no options to choose from */
 const FOR_ALLMANNA = ['flavonoider och triterpenoider', 'fibrer i fröskalet'];
-let quiz = { tema: 'blandat', qs: [], i: 0, score: 0, missed: [], answered: false };
+// temas = the themes ticked (one or more), antal = questions per round; both remembered in the student's browser
+let quiz = { temas: ['blandat'], antal: 10, qs: [], i: 0, score: 0, missed: [], answered: false };
+const ANTAL_VAL = [5, 10, 15, 20];
+/* Spaced repetition: every question has a weight, saved in the student's browser.
+   Wrong answer → weight × 2, right answer → weight × 0.5 (between 1/8 and 8). Weight 1 = never answered. */
+const VIKT_MIN = 0.125, VIKT_MAX = 8;
+function uppdateraVikt(key, ok) {
+  if (!key) return;
+  const v = store.get('qvikt', {});
+  v[key] = Math.min(VIKT_MAX, Math.max(VIKT_MIN, (v[key] || 1) * (ok ? 0.5 : 2)));
+  store.set('qvikt', v);
+}
 // pool = the plants to ask about (all of them, or only the ones the student keeps missing)
 function makeQuestions(tema, n, pool = VAXTER, typer = TEMAN[tema].typer) {
-  const out = [], seen = new Set();
-  for (let tries = 0; out.length < n && tries < 600; tries++) {
+  // 1. draw a large set of different candidate questions at random (as before)…
+  const cand = [], seen = new Set();
+  for (let tries = 0; cand.length < n * 6 && tries < 2000; tries++) {
     const p = pick(pool), t = pick(typer), q = QTYPES[t](p);
     if (q && q.fig) q.q2 = q.fig + '|' + q.q;            // same text with a different structure is a different question
     if (!q || seen.has(q.q2 || q.q + q.right)) continue;
     seen.add(q.q2 || q.q + q.right);
     if (!q.skriv && q.opts.length < 4) continue;
-    seen.add(q.q); if (q.plant === undefined) q.plant = p.id; q.typ = t; if (!q.skriv) q.opts = shuffle(q.opts); out.push(q);
-    // (rules questions set q.plant themselves: the product's plant, or null)
+    q.key = q.q2 || q.q + '|' + (q.right || '');         // identifies the question for the spaced-repetition weights
+    if (q.plant === undefined) q.plant = p.id;           // (rules questions set q.plant themselves: the product's plant, or null)
+    q.typ = t; if (!q.skriv) q.opts = shuffle(q.opts); cand.push(q);
+  }
+  // 2. …then pick n of them, each with a chance proportional to its weight
+  const vikter = store.get('qvikt', {}), out = [];
+  while (out.length < n && cand.length) {
+    const tot = cand.reduce((s, q) => s + (vikter[q.key] || 1), 0);
+    let r = Math.random() * tot, i = 0;
+    for (; i < cand.length - 1; i++) { r -= vikter[cand[i].key] || 1; if (r <= 0) break; }
+    out.push(cand.splice(i, 1)[0]);
   }
   return out;
 }
+function loadQuizVal() {
+  const v = store.get('quizval', null);
+  if (v && Array.isArray(v.temas)) {
+    const t = v.temas.filter(k => TEMAN[k]);
+    if (t.length) quiz.temas = t;
+    if (ANTAL_VAL.includes(v.antal)) quiz.antal = v.antal;
+  }
+}
+const saveQuizVal = () => store.set('quizval', { temas: quiz.temas, antal: quiz.antal });
+function toggleTema(k) {
+  const on = quiz.temas.includes(k);
+  if (on && quiz.temas.length === 1) return;          // at least one theme stays ticked
+  quiz.temas = on ? quiz.temas.filter(x => x !== k) : [...quiz.temas, k];
+  saveQuizVal(); viewQuiz();
+}
+const temaNamn = () => quiz.temas.map(k => TEMAN[k].namn).join(', ');
 function viewQuiz() {
-  app.innerHTML = `<div class="card"><h2>❓ Quiz</h2><p>10 frågor per omgång. Vissa är flerval, vissa visar kemiska strukturer, och i andra skriver du växtens latinska namn, exakt rätt stavat. Efter varje svar ser du rätt svar och kan öppna växtens faktakort.</p>
-    <h3 style="margin-top:.8rem">Välj tema</h3>
-    <div class="chips">${Object.entries(TEMAN).map(([k, t]) => `<button class="chip ${quiz.tema === k ? 'is-on' : ''}" onclick="quiz.tema='${k}';viewQuiz()">${t.namn}</button>`).join('')}</div>
-    <div class="btn-row"><button class="btn btn-main" onclick="startQuiz()">▶ Starta quiz</button></div></div>`;
+  loadQuizVal();
+  app.innerHTML = `<div class="card"><h2>❓ Quiz</h2><p>Vissa frågor är flerval, vissa visar kemiska strukturer, och i andra skriver du växtens latinska namn, exakt rätt stavat. Efter varje svar ser du rätt svar och kan öppna växtens faktakort.</p>
+    <p class="small muted">Frågor du svarat fel på kommer oftare tillbaka, och frågor du kan kommer mer sällan.</p>
+    <h3 style="margin-top:.8rem">Välj ett eller flera teman</h3>
+    <div class="chips">${Object.entries(TEMAN).map(([k, t]) => `<button class="chip ${quiz.temas.includes(k) ? 'is-on' : ''}" aria-pressed="${quiz.temas.includes(k)}" onclick="toggleTema('${k}')">${quiz.temas.includes(k) ? '✓ ' : ''}${t.namn}</button>`).join('')}</div>
+    <h3 style="margin-top:.8rem">Antal frågor</h3>
+    <div class="chips">${ANTAL_VAL.map(n => `<button class="chip ${quiz.antal === n ? 'is-on' : ''}" aria-pressed="${quiz.antal === n}" onclick="quiz.antal=${n};saveQuizVal();viewQuiz()">${n}</button>`).join('')}</div>
+    <div class="btn-row"><button class="btn btn-main" onclick="startQuiz()">▶ Starta quiz (${quiz.antal} frågor)</button></div></div>`;
 }
 /* ---------- the student's own results (saved only in their browser) ---------- */
 function logResult(pid, ok) {
@@ -1268,12 +1309,13 @@ function startFokus(ids) {
   if (!pool.length) return;
   const typer = TEMAN.blandat.typer.filter(t => !['klassPreparat', 'regel', 'kontrast'].includes(t));   // only questions about the chosen plants
   go('quiz');
-  quiz.qs = makeQuestions('blandat', 10, pool, typer); quiz.i = 0; quiz.score = 0; quiz.missed = []; quiz.answered = false; quiz.fokus = ids;
+  quiz.qs = makeQuestions('blandat', quiz.antal, pool, typer); quiz.i = 0; quiz.score = 0; quiz.missed = []; quiz.answered = false; quiz.fokus = ids;
   renderQ();
 }
 function startQuiz() {
   quiz.fokus = null;
-  quiz.qs = makeQuestions(quiz.tema, 10); quiz.i = 0; quiz.score = 0; quiz.missed = []; quiz.answered = false;
+  const typer = quiz.temas.flatMap(k => TEMAN[k].typer);   // all ticked themes mixed together
+  quiz.qs = makeQuestions(null, quiz.antal, VAXTER, typer); quiz.i = 0; quiz.score = 0; quiz.missed = []; quiz.answered = false;
   if (!quiz.qs.length) {
     app.innerHTML = `<div class="card"><h2>Inga frågor</h2><p>De kemiska strukturerna kunde inte laddas. Kontrollera internetanslutningen och ladda om sidan, eller välj ett annat tema.</p><div class="btn-row"><button class="btn" onclick="viewQuiz()">Byt tema</button></div></div>`;
     return;
@@ -1289,7 +1331,7 @@ function renderQ() {
   // with a structure: structure on the left and the question on the right (desktop); stacked on phones
   // four structures to choose from: on desktop they fill the left side, question and feedback on the right
   app.innerHTML = `<div class="card ${q.fig || q.molOpts ? 'wide' : ''}">
-    <p class="small muted">Fråga ${quiz.i + 1} av ${quiz.qs.length} · ${quiz.score} rätt</p>
+    <p class="small muted">Fråga ${quiz.i + 1} av ${quiz.qs.length} · ${quiz.score} rätt${quiz.i === 0 && quiz.qs.length < quiz.antal ? ` · det finns bara ${quiz.qs.length} olika frågor i ditt val` : ''}</p>
     <div class="progress"><div style="width:${quiz.i / quiz.qs.length * 100}%"></div></div>
     ${q.fig ? `<div class="qa-split"><div class="q-fig">${molDiv(q.fig, 'mol-big')}</div><div>${answerPart}</div></div>`
       : q.molOpts ? `<div class="mol-q">${answerPart}</div>` : answerPart}
@@ -1302,6 +1344,7 @@ function answerTyped(input) {
   quiz.answered = true;
   const q = quiz.qs[quiz.i], p = byId(q.plant), res = checkLatin(input.value, p);
   logResult(p.id, res.ok);
+  uppdateraVikt(q.key, res.ok);
   if (res.ok) quiz.score++; else if (!quiz.missed.includes(p.id)) quiz.missed.push(p.id);
   input.classList.add(res.ok ? 'ok' : 'bad');
   $('#qfb').innerHTML = typedFeedbackHTML(res, p) + (q.info ? `<p class="small" style="margin-top:.6rem">${q.info}</p>` : '') + nextBtnHTML();
@@ -1349,6 +1392,7 @@ function answerQ(k) {
   const missKey = q.typ === 'regel' || !q.plant ? 'regler' : q.plant;    // rules questions point back to the Regler page
   if (ok) quiz.score++; else if (!quiz.missed.includes(missKey)) quiz.missed.push(missKey);
   if (!['regel', 'klassPreparat', 'klassVal'].includes(q.typ)) logResult(q.plant, ok);   // product-class questions say nothing about the plant
+  uppdateraVikt(q.key, ok);
   app.querySelectorAll('.opt').forEach((b, j) => {
     b.disabled = true;
     if (q.opts[j].key === q.right) b.classList.add('ok'); else if (j === k) b.classList.add('bad');
@@ -1372,7 +1416,7 @@ function quizDone() {
       : `<button class="linkbtn" style="margin:.2rem .5rem" onclick="openPlant('${id}')">${byId(id).latin}</button>`).join('')}</p>` : ''}
     <div class="btn-row">
       ${missedPlants().length ? `<button class="btn btn-main" onclick="startFokus(missedPlants())">🎯 Öva på dina missar</button>` : ''}
-      <button class="btn ${missedPlants().length ? '' : 'btn-main'}" onclick="${quiz.fokus ? `startFokus(${JSON.stringify(quiz.fokus).replace(/"/g, "'")})` : 'startQuiz()'}">🔁 Ny omgång${quiz.fokus ? '' : ` (${TEMAN[quiz.tema].namn})`}</button>
+      <button class="btn ${missedPlants().length ? '' : 'btn-main'}" onclick="${quiz.fokus ? `startFokus(${JSON.stringify(quiz.fokus).replace(/"/g, "'")})` : 'startQuiz()'}">🔁 Ny omgång${quiz.fokus ? '' : ` (${temaNamn()})`}</button>
       <button class="btn" onclick="viewQuiz()">Byt tema</button></div></div>`;
 }
 const missedPlants = () => quiz.missed.filter(id => byId(id));
