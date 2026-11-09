@@ -938,7 +938,8 @@ function viewHome() {
       ${weakest().length ? `<div class="svaga"><b>🎯 Dina svagaste växter just nu:</b>
         ${weakest().map(id => `<button class="linkbtn" onclick="openPlant('${id}')"><i>${byId(id).latin}</i></button>`).join(', ')}
         <div class="btn-row" style="margin-top:.6rem"><button class="btn btn-main" onclick="startFokus(weakest())">Öva på dem</button>
-        <button class="btn" onclick="if(confirm('Nollställa dina resultat?')){store.set('stats',{});store.set('qvikt',{});viewHome()}">↺ Nollställ</button></div></div>` : ''}
+        <button class="btn" onclick="if(confirm('Nollställa dina resultat?')){store.set('stats',{});store.set('qvikt',{});viewHome()}">↺ Nollställ</button></div></div>`
+      : antalSvar() > 0 && antalSvar() < SVAGA_MIN_TOTALT ? `<p class="small muted svaga">🎯 När du har svarat på ${SVAGA_MIN_TOTALT} frågor visas här vilka växter du har svårast för (du har svarat på ${antalSvar()}).</p>` : ''}
     </div>
     <div class="tiles">
       <button class="tile" onclick="go('fakta')"><span class="ico">📖</span><span><b>Fakta</b><span class="d">Läs om alla växter, med bilder och kemiska strukturer.</span></span></button>
@@ -1299,10 +1300,14 @@ function logResult(pid, ok) {
   const st = store.get('stats', {}), s = st[pid] || [0, 0];
   s[ok ? 0 : 1]++; st[pid] = s; store.set('stats', st);
 }
-// plants answered wrong most often (share of wrong answers, then number of wrong answers)
+// plants answered wrong most often (share of wrong answers, then number of wrong answers).
+// Only once there is enough data: 40+ answers in total, and per plant 4+ answers with at least 40 % wrong.
+const SVAGA_MIN_TOTALT = 40, SVAGA_MIN_PER_VAXT = 4, SVAGA_MIN_ANDEL_FEL = 0.4;
+const antalSvar = () => Object.values(store.get('stats', {})).reduce((s, [r, w]) => s + r + w, 0);
 function weakest(n = 4) {
   const st = store.get('stats', {});
-  return Object.entries(st).filter(([id, [r, w]]) => w > 0 && byId(id))
+  if (antalSvar() < SVAGA_MIN_TOTALT) return [];
+  return Object.entries(st).filter(([id, [r, w]]) => byId(id) && r + w >= SVAGA_MIN_PER_VAXT && w / (r + w) >= SVAGA_MIN_ANDEL_FEL)
     .sort((a, b) => (b[1][1] / (b[1][0] + b[1][1])) - (a[1][1] / (a[1][0] + a[1][1])) || b[1][1] - a[1][1])
     .slice(0, n).map(([id]) => id);
 }
