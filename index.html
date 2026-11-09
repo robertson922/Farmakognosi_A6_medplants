@@ -111,8 +111,27 @@ p { margin: .3rem 0 .7rem; }
 @media (max-width: 480px) { .maste .mrow { grid-template-columns: 1fr; gap: 0; } }
 /* compound class and pathway under a structure */
 .mol-cap .bio { display: block; font-size: .78rem; color: var(--muted); margin-top: .1rem; }
+.mol-cap .bio-not { font-style: italic; }
+.facts p.kontrast { margin: 0 0 .5rem; }
 /* weakest plants on the start page */
 .svaga { margin-top: .8rem; padding-top: .8rem; border-top: 1px solid var(--panel2); }
+/* teacher review page (#granskning) */
+.gplant { margin-top: 1rem; }
+.gtab { width: 100%; border-collapse: collapse; font-size: .95rem; }
+.gtab th { text-align: left; vertical-align: top; width: 14rem; padding: .45rem .8rem .45rem 0; color: var(--acc-hi); font-weight: 700; font-size: .85rem; }
+.gtab td { padding: .45rem 0; vertical-align: top; }
+.gtab tr + tr { border-top: 1px solid var(--panel2); }
+.gtab ul, .gplant ol { margin: .1rem 0; padding-left: 1.2rem; }
+.gtab li, .gplant ol li { margin-bottom: .35rem; }
+.gmark { display: inline-block; font-size: .78rem; color: var(--amber); }
+@media (max-width: 640px) { .gtab th { display: block; width: auto; padding-bottom: 0; } .gtab td { display: block; } }
+@media print {
+  header.top, .granskning-intro .btn-row { display: none !important; }
+  body, main, .card { background: #fff !important; color: #000 !important; }
+  .card { border: 1px solid #999; break-inside: auto; }
+  .gplant { break-before: page; }
+  .gtab th, .gmark, .muted { color: #333 !important; }
+}
 .credit .ptext { display: block; color: var(--soft); font-size: .92rem; margin-bottom: .15rem; }
 /* small photo thumbnails under a plant's main photo */
 .gallery-thumbs { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .55rem; }
@@ -359,7 +378,7 @@ const VAXTER = [
   substansText: 'Curcumin (E100), desmetoxicurcumin och bisdesmetoxicurcumin.',
   mekanism: '',
   anvandning: 'Stor användning som krydda och för färgning av mat och textilier. Ingick i det nu avregistrerade TVBL-preparatet <b>Galexir</b> (tillsammans med kronärtskocka och gullgentiana) vid tillfälliga matsmältningsbesvär som uppkördhet och väderspänning.',
-  anvKort: ['krydda och gult färgämne i mat och textilier'],
+  anvKort: ['krydda och färgämne i mat och textilier'],
   preparat: ['Galexir'], sakerhet: '', sakKort: [], tema: ['mage'], extra: ''
 },
 {
@@ -426,7 +445,7 @@ const VAXTER = [
   substanser: ['hederasaponin B'],
   substansText: 'Triterpenoida saponinglykosider, t.ex. hederasaponin B.',
   mekanism: '',
-  anvandning: 'Expektorantia (ATC-kod R05C). <b>Prospan</b> (VBL) används för att underlätta upphostning vid hosta med segt slem.',
+  anvandning: 'Expektorantia, dvs. slemlösande medel (ATC-kod R05C). <b>Prospan</b> (VBL) används för att underlätta upphostning vid hosta med segt slem.',
   anvKort: ['hosta med segt slem (slemlösande)'],
   preparat: ['Prospan'], sakerhet: '', sakKort: [], tema: ['hosta'], extra: ''
 },
@@ -563,7 +582,18 @@ const STRUKTURER = [
    vagar: ISO = MVA-/MEP-vägen, SHIK = shikimisyravägen, ACET = acetat-malonatvägen,
           ALK = alifatisk aminosyrasyntes, GLY = kolhydratsyntes
    ===================================================================== */
-const VAGNAMN = { ISO: 'MVA-/MEP-vägen', SHIK: 'Shikimisyravägen', ACET: 'Acetat-malonatvägen', ALK: 'Alifatisk aminosyrasyntes', GLY: 'Kolhydratsyntes' };
+// names as in the biosynthesis trainer, with the names used in the course book/seminar in brackets
+const VAGNAMN = { ISO: 'MVA-/MEP-vägen (isopentenyldifosfatvägen)', SHIK: 'Shikimisyravägen', ACET: 'Acetat-malonatvägen (acylpolymalonatvägen)', ALK: 'Alifatisk aminosyrasyntes', GLY: 'Kolhydratsyntes' };
+
+/* DRUG TYPES of each plant (the categories in the "vegetabiliska droger" seminar). Used for
+   "Vilken av växterna är en radix-drog?" questions. */
+const DROGTYPER = {
+  atropa: ['folium', 'radix'], cannabis: ['folium', 'flos'], curcuma: ['rhizoma'], digitalis: ['folium'],
+  echinacea: ['radix', 'herba'], ephedra: ['herba'], ginkgo: ['folium'], harpago: ['radix'], hedera: ['folium'],
+  hypericum: ['herba'], panax: ['radix'], papaver: ['latex'], passiflora: ['herba'], plantago: ['semen'],
+  senna: ['fructus'], valeriana: ['radix']
+};
+const DROGTYP_SV = { radix: 'rot', rhizoma: 'jordstam', folium: 'blad', herba: 'ört', flos: 'blomma', fructus: 'frukt', semen: 'frö', latex: 'mjölksaft' };
 const BIOSYNTES = {
   hyoscyamin:     { klass: 'tropanalkaloid', vagar: ['ALK', 'SHIK'], not: 'Tropanringen från ornitin, tropasyran från fenylalanin.' },
   atropin:        { klass: 'tropanalkaloid', vagar: ['ALK', 'SHIK'], not: 'Tropanringen från ornitin, tropasyran från fenylalanin.' },
@@ -596,7 +626,20 @@ const BIOSYNTES = {
   valerinsyra:    { klass: 'kortkedjig fettsyra', vagar: ['ALK'], not: 'Bildas från leucin.' }
 };
 const vagText = s => (BIOSYNTES[s.id] ? BIOSYNTES[s.id].vagar.map(v => VAGNAMN[v]).join(' + ') : '');
-const bioLine = s => BIOSYNTES[s.id] ? `<span class="bio">${BIOSYNTES[s.id].klass} · ${vagText(s)}</span>` : '';
+const bioLine = s => BIOSYNTES[s.id] ? `<span class="bio">${BIOSYNTES[s.id].klass} · ${vagText(s)}</span><span class="bio bio-not">${BIOSYNTES[s.id].not}</span>` : '';
+// link straight to the plant's page in Kew's Plants of the World Online (the database used in the seminar).
+// The numbers are the plants' IPNI name IDs (looked up at ipni.org), which POWO uses for its pages.
+const POWO_ID = {
+  atropa: '814358-1', cannabis: '306087-2', curcuma: '796451-1', digitalis: '802077-1', echinacea: '1174497-2',
+  ephedra: '383460-1', ginkgo: '262125-1', harpago: '675824-1', hedera: '90723-1', hypericum: '433719-1',
+  panax: '91472-1', papaver: '673724-1', passiflora: '675096-1', plantago: '685486-1', senna: '518323-1', valeriana: '860012-1'
+};
+const powoHTML = p => POWO_ID[p.id] ? `<a href="https://powo.science.kew.org/taxon/urn:lsid:ipni.org:names:${POWO_ID[p.id]}" target="_blank" rel="noopener"><i>${p.latin}</i> i POWO ↗</a>` : '';
+// the contrast facts that belong to a plant, shown on its page (same text as the quiz uses)
+const kontrastHTML = p => {
+  const k = KONTRASTER.filter(x => x.vaxt === p.id);
+  return k.length ? k.map(x => `<p class="kontrast">${x.q} <b>${x.svar[0]}</b></p>`).join('') : '';
+};
 
 /* =====================================================================
    CONTRAST QUESTIONS: things that are easy to mix up. Right answer first.
@@ -617,15 +660,15 @@ const KONTRASTER = [
     svar: ['Murgröna: slemlösande (Prospan) · efedra: efedrin i Mollipect · vallmo: noskapin är hostdämpande', 'Murgröna: hostdämpande · efedra: slemlösande · vallmo: papaverin är hostdämpande', 'Murgröna: efedrin · efedra: saponiner · vallmo: morfin är slemlösande', 'Alla tre är slemlösande via saponiner'] },
   { vaxt: 'atropa', q: 'Vad skiljer atropin från (–)-hyoscyamin?',
     svar: ['Atropin är ett racemat av (–)- och (+)-hyoscyamin; bara (–)-formen är aktiv', 'Atropin har en epoxidbrygga i tropanringen', 'Atropin är en glykosid av hyoscyamin', 'De kommer från olika växtfamiljer'] },
-  { vaxt: 'atropa', q: 'Vad skiljer skopolamin strukturellt från hyoscyamin?',
+  { vaxt: 'atropa', egen: true, q: 'Vad skiljer skopolamin strukturellt från hyoscyamin?',
     svar: ['Skopolamin har en epoxidbrygga (en extra syreatom) i tropanringen', 'Skopolamin är ett racemat', 'Skopolamin saknar kväve', 'Skopolamin har en extra metoxigrupp på bensenringen'] },
-  { vaxt: 'ephedra', q: 'Hur förhåller sig (–)-efedrin och (+)-pseudoefedrin till varandra?',
+  { vaxt: 'ephedra', egen: true, q: 'Hur förhåller sig (–)-efedrin och (+)-pseudoefedrin till varandra?',
     svar: ['De är diastereomerer: samma konstitution, olika konfiguration vid ett av två stereocentrum', 'De är enantiomerer (spegelbilder)', 'De har olika summaformel', 'De är samma ämne med olika namn'] },
-  { vaxt: 'papaver', q: 'Hur skiljer sig kodein strukturellt från morfin?',
+  { vaxt: 'papaver', egen: true, q: 'Hur skiljer sig kodein strukturellt från morfin?',
     svar: ['Kodein har en metoxigrupp (OCH₃) där morfin har en fenolisk OH-grupp', 'Kodein saknar kväve', 'Kodein har en extra ring', 'Kodein är ett racemat av morfin'] },
-  { vaxt: 'digitalis', q: 'Hur skiljer sig digoxin från digitoxin?',
+  { vaxt: 'digitalis', egen: true, q: 'Hur skiljer sig digoxin från digitoxin?',
     svar: ['Digoxin har en extra OH-grupp på steroidskelettet', 'Digoxin har fler sockerenheter', 'Digitoxin saknar laktonring', 'De kommer från olika växtfamiljer'] },
-  { vaxt: 'ginkgo', q: 'Hur skiljer sig ginkgolid B från ginkgolid A?',
+  { vaxt: 'ginkgo', egen: true, q: 'Hur skiljer sig ginkgolid B från ginkgolid A?',
     svar: ['Ginkgolid B har en extra OH-grupp', 'Ginkgolid B är en seskviterpen', 'Ginkgolid B saknar laktonringar', 'Ginkgolid B är en glykosid'] },
   { vaxt: 'cannabis', q: 'Vilket påstående om THC och CBD stämmer?',
     svar: ['THC är berusande; CBD är inte berusande, och dess antikonvulsiva effekt går inte via cannabinoidreceptorer', 'CBD är berusande; THC är inte berusande', 'Båda är berusande', 'CBD verkar antikonvulsivt via CB1-receptorer'] },
@@ -885,12 +928,13 @@ document.addEventListener('click', e => {
 
 // the fact sections, in reading order; factsHTML(p, keys) shows only some of them
 const FAKTA_RADER = [
-  ['slakte', 'Familj och släkte'], ['delText', 'Använd växtdel'], ['substansText', 'Aktiva substanser'],
+  ['slakte', 'Familj och släkte'], ['powo', 'Plants of the World Online'], ['delText', 'Använd växtdel'], ['substansText', 'Aktiva substanser'],
   ['strukturer', 'Strukturer <span style="text-transform:none;letter-spacing:0;font-weight:400;color:var(--muted)">(tryck för att förstora)</span>'],
-  ['mekanism', 'Verkningsmekanism'], ['anvandning', 'Användning'], ['sakerhet', 'Säkerhet och biverkningar'], ['extra', 'Bra att veta']
+  ['mekanism', 'Verkningsmekanism'], ['anvandning', 'Användning'], ['sakerhet', 'Säkerhet och biverkningar'], ['extra', 'Bra att veta'],
+  ['kontraster', 'Jämför och skilj']
 ];
 function factsHTML(p, keys = null) {
-  const val = k => k === 'strukturer' ? molGridHTML(p) : p[k];
+  const val = k => k === 'strukturer' ? molGridHTML(p) : k === 'kontraster' ? kontrastHTML(p) : k === 'powo' ? powoHTML(p) : p[k];
   return `<dl class="facts">${FAKTA_RADER.filter(([k]) => !keys || keys.includes(k))
     .map(([k, t]) => val(k) ? `<div class="frow"><dt>${t}</dt><dd>${val(k)}</dd></div>` : '').join('')}</dl>`;
 }
@@ -910,7 +954,7 @@ function masteHTML(p) {
 // a plant's photo and facts. Phones: everything stacked. Desktop: photo beside all the text,
 // then the structures in a full-width row at the bottom. The must-know box comes first.
 const detailHTML = p => masteHTML(p) + (img(p)
-  ? `<div class="detail-top"><div class="detail-photo">${photoHTML(p, true, true)}</div><div>${factsHTML(p, ['slakte', 'delText', 'substansText', 'mekanism', 'anvandning', 'sakerhet', 'extra'])}</div></div>
+  ? `<div class="detail-top"><div class="detail-photo">${photoHTML(p, true, true)}</div><div>${factsHTML(p, ['slakte', 'powo', 'delText', 'substansText', 'mekanism', 'anvandning', 'sakerhet', 'extra', 'kontraster'])}</div></div>
      <div class="detail-structs">${factsHTML(p, ['strukturer'])}</div>`
   : factsHTML(p));
 function openPlant(id) {
@@ -958,7 +1002,60 @@ $('#modal').addEventListener('click', e => { if (e.target.id === 'modal') closeM
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
 /* ============================ navigation ============================ */
-const VIEWS = { hem: viewHome, fakta: viewFakta, kort: viewKort, quiz: viewQuiz, para: viewPara, bild: viewBild };
+const VIEWS = { hem: viewHome, fakta: viewFakta, kort: viewKort, quiz: viewQuiz, para: viewPara, bild: viewBild, granskning: viewGranskning };
+
+/* ============================ granskning (for teachers) ============================
+   Open the page with #granskning at the end of the address. Lists EVERYTHING the quiz uses, plant by plant,
+   straight from the same data, so it is always up to date. Not linked from the student menu. */
+// facts that are not taken from the lecture text (shown with a marker)
+const KALLA_MARK = {
+  familj: { atropa: 'tillagt', ginkgo: 'tillagt' },
+  del: { atropa: 'tillagt', digitalis: 'tillagt', valeriana: 'översatt', curcuma: 'översatt', cannabis: 'översatt', ginkgo: 'översatt',
+         plantago: 'översatt', hypericum: 'översatt', passiflora: 'översatt' }
+};
+function viewGranskning() {
+  const mark = t => t ? ` <span class="gmark">${t === 'tillagt' ? '⚠ tillagt (finns inte i föreläsningen)' : t === 'översatt' ? '↔ översatt från svensk text i föreläsningen' : t}</span>` : '';
+  const rad = (t, v) => v ? `<tr><th>${t}</th><td>${v}</td></tr>` : '';
+  const lista = a => a && a.length ? a.join(' · ') : '<span class="muted">–</span>';
+  const plant = p => {
+    const strukt = structsOf(p).map(s => `<li><b>${s.namn}</b>${BIOSYNTES[s.id] ? `: ${BIOSYNTES[s.id].klass} · ${vagText(s)}. <span class="muted">${BIOSYNTES[s.id].not}</span>` : ''}</li>`).join('');
+    const kontr = KONTRASTER.filter(k => k.vaxt === p.id).map(k => `<li>${k.q}${k.egen ? mark('tillagt') : ''}<br>✓ <b>${k.svar[0]}</b><br><span class="muted">Felaktiga alternativ: ${k.svar.slice(1).join(' · ')}</span></li>`).join('');
+    const nyck = (NYCKLAR[p.id] || []).map(b => `<li>${b.valfri ? '(valfritt) ' : '<b>krävs:</b> '}${b.etikett} <span class="muted">– godtar ord som innehåller: ${b.ord.join(', ')}</span></li>`).join('');
+    return `<section class="card gplant">
+      <h2><i>${p.latin}</i> <span class="muted" style="font-weight:400">${p.sv}</span></h2>
+      <table class="gtab">
+        ${rad('Latinskt namn i skrivfrågor', `<i>${p.latin}</i> (exakt)${p.latinAlt ? ` · godtar även <i>${p.latinAlt.join(', ')}</i>` : ''}${p.latinArter ? ` · i frågor utan bild även <i>${p.latinArter.join(', ')}</i>` : ''}`)}
+        ${rad('Svenskt namn', p.sv)}
+        ${rad('Familj', p.familj + mark(KALLA_MARK.familj[p.id]))}
+        ${rad('Drog (växtdel)', `<i>${p.del}</i> (${p.delSv})` + mark(KALLA_MARK.del[p.id]))}
+        ${rad('Drogtyp (frågan "Vilken av växterna är en …-drog?")', lista((DROGTYPER[p.id] || []).map(t => `<i>${t}</i>`)) + mark(KALLA_MARK.del[p.id]))}
+        ${rad('Aktiva substanser (svar i quizen)', lista(p.substanser))}
+        ${rad('Används vid (svar i quizen)', lista(p.anvKort))}
+        ${rad('Se upp med (svar i quizen)', lista(p.sakKort))}
+        ${rad('Preparat (svar i quizen)', lista(p.preparat))}
+        ${rad('Grupp för "används vid"', `${lista(p.tema)} <span class="muted">(växter i samma grupp blir aldrig fel svarsalternativ för varandra)</span>`)}
+        ${rad('Strukturer, ämnesklass och biosyntes', strukt ? `<ul>${strukt}</ul>` + mark('tillagt').replace('finns inte i föreläsningen', 'ämnesklass och biosyntesväg; strukturerna från PubChem') : '')}
+        ${rad('Jämför och skilj', kontr ? `<ul>${kontr}</ul>` : '')}
+        ${rad('Skriv användning: modellsvar', p.anvandning)}
+        ${rad('Skriv användning: nyckelbegrepp', nyck ? `<ul>${nyck}</ul>` : '')}
+      </table>
+    </section>`;
+  };
+  const regler = REGELFRAGOR.map(r => `<li>${r.q}<br>✓ <b>${r.svar[0]}</b><br><span class="muted">Felaktiga alternativ: ${r.svar.slice(1).join(' · ')}</span></li>`).join('');
+  const klasser = Object.keys(KLASS_NAMN).map(k => `<li><b>${KLASS_NAMN[k]}</b>: ${PREPARATLISTA.filter(x => x.klass === k).map(x => x.namn).join(', ')}</li>`).join('');
+  app.innerHTML = `<div class="card granskning-intro">
+      <h2>📋 Granskningsunderlag</h2>
+      <p>Här står <b>allt som quizen frågar om</b>, växt för växt, hämtat direkt från samma data som frågorna. Rättas något här, rättas frågorna automatiskt.</p>
+      <p class="small">⚠ = tillagt, finns inte i föreläsningsmaterialet. ↔ = översatt från svensk text i föreläsningen. Allt annat kommer från föreläsningen, produkttabellen eller FASS.
+      Felaktiga svarsalternativ i flervalsfrågorna hämtas från de andra växternas uppgifter, utom i Jämför och skilj och Regler, där de står nedan.</p>
+      <div class="btn-row"><button class="btn" onclick="window.print()">🖨 Skriv ut / spara som PDF</button></div>
+    </div>
+    ${VAXTER.map(plant).join('')}
+    <section class="card gplant"><h2>Regler: VBL och TVBL</h2>
+      <h3>Regelfrågor</h3><ol>${regler}</ol>
+      <h3>Preparat och läkemedelsklass</h3><ul>${klasser}</ul>
+    </section>`;
+}
 function go(v) {
   if (!VIEWS[v]) v = 'hem';
   document.body.dataset.view = v;            // lets the phone layout hide the Start button on the start page
@@ -1139,7 +1236,7 @@ const TEMAN = {
   blandat: { namn: 'Blandat', typer: [
     ...Array(3).fill(['substans', 'substansIVaxt', 'anv', 'del', 'sak', 'sakIVaxt', 'skrivSv', 'skrivSubstans']).flat(),
     ...Array(4).fill('skrivAnv'),   // free text "Vad används X till?": about 1 in 10 questions
-    'preparat', 'familj', 'skrivPreparat', 'strukturNamn', 'strukturVaxt', 'strukturVal', 'skrivStruktur', 'klassPreparat', 'regel', 'kontrast'],   // biosynthesis questions only in their own theme
+    'preparat', 'familj', 'drogtyp', 'skrivPreparat', 'strukturNamn', 'strukturVaxt', 'strukturVal', 'skrivStruktur', 'klassPreparat', 'regel', 'kontrast'],   // biosynthesis questions only in their own theme
     skrivkrav: true, latinTyper: ['skrivSv', 'skrivSubstans', 'skrivPreparat'] },
   strukturer: { namn: 'Strukturer', typer: ['strukturNamn', 'strukturVaxt', 'strukturVal', 'skrivStruktur'] },
   regler: { namn: 'Regler: VBL och TVBL', typer: ['klassPreparat', 'klassVal', 'regel'] },
@@ -1149,7 +1246,7 @@ const TEMAN = {
   substanser: { namn: 'Substanser', typer: ['substans', 'substansIVaxt', 'skrivSubstans'], latinTyper: ['skrivSubstans'] },
   anvandning: { namn: 'Användning och preparat', typer: ['anv', 'preparat', 'skrivAnv', 'skrivPreparat'], skrivkrav: true, latinTyper: ['skrivPreparat'] },
   fritext: { namn: 'Skriv användning', typer: ['skrivAnv'] },
-  namn: { namn: 'Familj och drog', typer: ['familj', 'del'] },
+  namn: { namn: 'Familj och drog', typer: ['familj', 'del', 'drogtyp'] },
   sakerhet: { namn: 'Säkerhet', typer: ['sak', 'sakIVaxt'] }
 };
 const plantOpt = p => ({ key: p.id, html: nameHTML(p) });
@@ -1254,6 +1351,14 @@ const QTYPES = {
     return { plant: null, regler: true, q: r.q, right: r.svar[0], info: r.svar[0], opts: r.svar.map(s => ({ key: s, html: s })) };
   },
   /* things that are easy to mix up */
+  /* drug type: "Vilken av växterna är en radix-drog?" (right answer = this plant) */
+  drogtyp(p) {
+    const typ = pick(DROGTYPER[p.id] || []); if (!typ) return null;
+    const alla = VAXTER.filter(o => (DROGTYPER[o.id] || []).includes(typ));
+    return { q: `Vilken av växterna är en <i>${typ}</i>-drog (${DROGTYP_SV[typ]})?`, right: p.id,
+      info: `<i>${typ}</i>-droger bland kursens växter: ${alla.map(o => `<i>${o.latin}</i>`).join(', ')}.`,
+      opts: [plantOpt(p), ...otherPlants(p, 3, o => !(DROGTYPER[o.id] || []).includes(typ)).map(plantOpt)] };
+  },
   /* free text: the student writes what the plant is used for */
   skrivAnv(p) {
     if (!NYCKLAR[p.id]) return null;
@@ -1519,6 +1624,7 @@ function choiceInfo(q, key) {
       anv: `används vid: ${listOr(o.anvKort, '–')}`,
       preparat: o.preparat.length ? `finns i preparaten ${o.preparat.join(', ')}` : 'inte har något preparat i kursen',
       sak: o.sakKort.length ? `förknippas med: ${o.sakKort.join('; ')}` : 'inte har några särskilda säkerhetspunkter i kursen',
+      drogtyp: `har drogen <i>${o.del}</i> (${o.delSv})`,
       strukturVaxt: structsOf(o).length ? `innehåller t.ex. ${structsOf(o).map(s => s.namn).join(', ')}` : 'inte har några strukturer i kursen'
     }[q.typ];
     return `Du valde ${plantLink(o)}${what ? `, som ${what}` : ''}.`;
