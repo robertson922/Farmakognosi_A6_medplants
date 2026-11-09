@@ -193,6 +193,16 @@ details.plant .body { padding: 0 1rem 1rem; }
 .answer-input.ok { border-color: var(--acc); background: var(--acc-bg); }
 .answer-input.bad { border-color: var(--bad); background: var(--bad-bg); }
 .typeform .btn { flex: 0 0 auto; }
+.typeform.fritext { flex-direction: column; align-items: stretch; }
+.typeform.fritext .answer-input { font-style: normal; resize: vertical; min-height: 5.5rem; line-height: 1.4; }
+.typeform.fritext .btn { align-self: flex-start; min-width: 8rem; }
+ul.begrepp { list-style: none; padding-left: .2rem; margin: .2rem 0; }
+.feedback.fritext-fb { background: var(--bg); border: 1px solid var(--line); color: var(--text); font-weight: 400; }
+.bedom .btn { flex: 1 1 7rem; }
+.bedom .btn.is-forslag { border-color: var(--soft); }
+.bedom .btn.is-vald { border-color: var(--acc); background: var(--acc-bg); color: #d1fae5; opacity: 1; }
+.bedom .btn:disabled:not(.is-vald) { opacity: .45; cursor: default; }
+ul.begrepp li { margin: .1rem 0; }
 .rule { font-size: .9rem; color: var(--soft); margin: 0 0 .7rem; }
 
 /* fact-card pop-up */
@@ -626,6 +636,41 @@ const KONTRASTER = [
   { vaxt: 'papaver', q: 'Opiumvallmons alkaloider: vilken kombination av effekter stämmer?',
     svar: ['Morfin: smärtstillande · noskapin: hostdämpande · papaverin: kramplösande', 'Morfin: hostdämpande · noskapin: kramplösande · papaverin: smärtstillande', 'Morfin: kramplösande · noskapin: smärtstillande · papaverin: hostdämpande', 'Alla tre är främst smärtstillande'] }
 ];
+
+/* =====================================================================
+   FREE-TEXT ANSWERS: key concepts for "Vad används X till?".
+   Each plant has a few concepts; every concept that is not 'valfri' must be in the answer.
+   ord = accepted word stems (lower case). An answer matches a stem if a word in it contains the stem;
+   longer stems also tolerate a small typo. Stems with a space must appear as that phrase.
+   ===================================================================== */
+const NYCKLAR = {
+  atropa:     [{ etikett: 'åksjuka (skopolamin)', ord: ['åksjuk', 'sjösjuk', 'rörelsesjuk', 'resesjuk', 'illamående'] }],
+  cannabis:   [{ etikett: 'spasticitet vid MS', ord: ['spastic', 'spastis', 'muskelstel', 'ms', 'skleros'] },
+               { etikett: 'krampanfall (Dravets syndrom, LGS)', ord: ['kramp', 'epilep', 'dravet', 'lennox', 'lgs'] }],
+  curcuma:    [{ etikett: 'matsmältningsbesvär, eller krydda/färgämne', ord: ['matsmält', 'uppkörd', 'väderspänn', 'dyspeps', 'krydd', 'färg'] }],
+  digitalis:  [{ etikett: 'hjärtläkemedel', ord: ['hjärt', 'kardi', 'förmaksflimmer'] }],
+  echinacea:  [{ etikett: 'förkylning', ord: ['förkyl', 'snuva', 'luftvägsinfekt'] },
+               { etikett: 'småsår, mild akne', ord: ['sår', 'akne', 'acne'], valfri: true }],
+  ephedra:    [{ etikett: 'andningsbesvär/hosta', ord: ['andning', 'hosta', 'host', 'astma', 'luftväg', 'bronk'] }],
+  ginkgo:     [{ etikett: 'minnes- eller koncentrationsbesvär', ord: ['minne', 'minnes', 'koncentration', 'kognitiv', 'demens'] },
+               { etikett: 'hos äldre', ord: ['äldre', 'ålder'], valfri: true },
+               { etikett: 'yrsel, öronsusningar, trötthet', ord: ['yrsel', 'öronsus', 'tinnitus', 'trött'], valfri: true }],
+  harpago:    [{ etikett: 'ledsmärta, lätt artros', ord: ['led', 'artros', 'reuma', 'smärt'] },
+               { etikett: 'lättare matsmältningsbesvär', ord: ['matsmält', 'uppblåst', 'gaser', 'aptit'], valfri: true }],
+  hedera:     [{ etikett: 'hosta', ord: ['host'] },
+               { etikett: 'segt slem (slemlösande)', ord: ['slem', 'expektor', 'upphost'] }],
+  hypericum:  [{ etikett: 'lätt nedstämdhet', ord: ['nedstäm', 'depression', 'depressi', 'deprim'] },
+               { etikett: 'lindrig oro, mental utmattning', ord: ['oro', 'utmatt'], valfri: true }],
+  panax:      [{ etikett: 'trötthet och svaghetskänsla (stärkande)', ord: ['trött', 'svaghet', 'stärk', 'prestation', 'orkeslös', 'utmatt'] }],
+  papaver:    [{ etikett: 'smärtlindring', ord: ['smärt', 'analget', 'värk'] },
+               { etikett: 'hosta, kramp, förstoppande', ord: ['host', 'kramp', 'förstopp', 'diarr'], valfri: true }],
+  passiflora: [{ etikett: 'oro, nervös anspänning', ord: ['oro', 'nervös', 'anspänn', 'stress', 'ångest', 'irritab'] },
+               { etikett: 'insomningsbesvär', ord: ['sömn', 'insomn', 'sova'], valfri: true }],
+  plantago:   [{ etikett: 'förstoppning / magen i balans (bulkmedel)', ord: ['förstopp', 'bulk', 'mage', 'magen', 'tarm', 'laxer', 'diarr', 'fiber', 'trög'] }],
+  senna:      [{ etikett: 'tillfällig förstoppning', ord: ['förstopp', 'trög mage', 'laxer', 'laxativ', 'tarmtöm'] }],
+  valeriana:  [{ etikett: 'lindrig oro', ord: ['oro', 'ångest', 'nervös', 'anspänn'] },
+               { etikett: 'insomningsbesvär/sömnbesvär', ord: ['sömn', 'insomn', 'sova'] }]
+};
 
 /* =====================================================================
    RULES: product classes (from the course's product table, the lecture and FASS).
@@ -1092,14 +1137,17 @@ const TEMAN = {
   // those question types are listed 3 times, so about 7 in 10 questions come from them. Everything else still appears.
   blandat: { namn: 'Blandat', typer: [
     ...Array(3).fill(['substans', 'substansIVaxt', 'anv', 'del', 'sak', 'sakIVaxt', 'skrivSv', 'skrivSubstans']).flat(),
-    'preparat', 'familj', 'skrivPreparat', 'strukturNamn', 'strukturVaxt', 'strukturVal', 'skrivStruktur', 'klassPreparat', 'regel', 'kontrast'] },   // biosynthesis questions only in their own theme
+    ...Array(4).fill('skrivAnv'),   // free text "Vad används X till?": about 1 in 10 questions
+    'preparat', 'familj', 'skrivPreparat', 'strukturNamn', 'strukturVaxt', 'strukturVal', 'skrivStruktur', 'klassPreparat', 'regel', 'kontrast'],   // biosynthesis questions only in their own theme
+    skrivkrav: true, latinTyper: ['skrivSv', 'skrivSubstans', 'skrivPreparat'] },
   strukturer: { namn: 'Strukturer', typer: ['strukturNamn', 'strukturVaxt', 'strukturVal', 'skrivStruktur'] },
   regler: { namn: 'Regler: VBL och TVBL', typer: ['klassPreparat', 'klassVal', 'regel'] },
   kontrast: { namn: 'Jämför och skilj', typer: ['kontrast'] },
   biosyntes: { namn: 'Ämnesklass och biosyntes', typer: ['bioKlass', 'bioVag'] },
   latin: { namn: 'Skriv latinska namn', typer: ['skrivSv', 'skrivSubstans', 'skrivPreparat', 'skrivStruktur'] },
-  substanser: { namn: 'Substanser', typer: ['substans', 'substansIVaxt'] },
-  anvandning: { namn: 'Användning och preparat', typer: ['anv', 'preparat'] },
+  substanser: { namn: 'Substanser', typer: ['substans', 'substansIVaxt', 'skrivSubstans'], latinTyper: ['skrivSubstans'] },
+  anvandning: { namn: 'Användning och preparat', typer: ['anv', 'preparat', 'skrivAnv', 'skrivPreparat'], skrivkrav: true, latinTyper: ['skrivPreparat'] },
+  fritext: { namn: 'Skriv användning', typer: ['skrivAnv'] },
   namn: { namn: 'Familj och växtdel', typer: ['familj', 'del'] },
   sakerhet: { namn: 'Säkerhet', typer: ['sak', 'sakIVaxt'] }
 };
@@ -1203,6 +1251,11 @@ const QTYPES = {
     return { plant: null, regler: true, q: r.q, right: r.svar[0], info: r.svar[0], opts: r.svar.map(s => ({ key: s, html: s })) };
   },
   /* things that are easy to mix up */
+  /* free text: the student writes what the plant is used for */
+  skrivAnv(p) {
+    if (!NYCKLAR[p.id]) return null;
+    return { fritext: true, q: `Vad används <i>${p.latin}</i> (${p.sv}) till?` };
+  },
   kontrast() {
     const k = pick(KONTRASTER);
     return { plant: k.vaxt, q: k.q, right: k.svar[0], info: k.svar[0], opts: k.svar.map(s => ({ key: s, html: s })) };
@@ -1250,10 +1303,10 @@ function makeQuestions(tema, n, pool = VAXTER, typer = TEMAN[tema].typer) {
     if (q && q.fig) q.q2 = q.fig + '|' + q.q;            // same text with a different structure is a different question
     if (!q || seen.has(q.q2 || q.q + q.right)) continue;
     seen.add(q.q2 || q.q + q.right);
-    if (!q.skriv && q.opts.length < 4) continue;
+    if (q.opts && q.opts.length < 4) continue;          // typed and free-text questions have no options
     q.key = q.q2 || q.q + '|' + (q.right || '');         // identifies the question for the spaced-repetition weights
     if (q.plant === undefined) q.plant = p.id;           // (rules questions set q.plant themselves: the product's plant, or null)
-    q.typ = t; if (!q.skriv) q.opts = shuffle(q.opts); cand.push(q);
+    q.typ = t; if (q.opts) q.opts = shuffle(q.opts); cand.push(q);
   }
   // 2. …then pick n of them, each with a chance proportional to its weight
   const vikter = store.get('qvikt', {}), out = [];
@@ -1287,7 +1340,7 @@ const temaNamn = () => quiz.temas.map(k => TEMAN[k].namn).join(', ');
 function viewQuiz() {
   loadQuizVal();
   app.innerHTML = `<div class="card"><h2>❓ Quiz</h2><p>Vissa frågor är flerval, vissa visar kemiska strukturer, och i andra skriver du växtens latinska namn, exakt rätt stavat. Efter varje svar ser du rätt svar och kan öppna växtens faktakort.</p>
-    <p class="small muted">Frågor du svarat fel på kommer oftare tillbaka, och frågor du kan kommer mer sällan.</p>
+    <p class="small muted">Varje omgång innehåller några frågor där du skriver svaret själv. Frågor du svarat fel på kommer oftare tillbaka, och frågor du kan kommer mer sällan.</p>
     <h3 style="margin-top:.8rem">Välj ett eller flera teman</h3>
     <div class="chips">${Object.entries(TEMAN).map(([k, t]) => `<button class="chip ${quiz.temas.includes(k) ? 'is-on' : ''}" aria-pressed="${quiz.temas.includes(k)}" onclick="toggleTema('${k}')">${quiz.temas.includes(k) ? '✓ ' : ''}${t.namn}</button>`).join('')}</div>
     <h3 style="margin-top:.8rem">Antal frågor</h3>
@@ -1319,13 +1372,37 @@ function startFokus(ids) {
   if (!pool.length) return;
   const typer = TEMAN.blandat.typer.filter(t => !['klassPreparat', 'regel', 'kontrast'].includes(t));   // only questions about the chosen plants
   go('quiz');
-  quiz.qs = makeQuestions('blandat', quiz.antal, pool, typer); quiz.i = 0; quiz.score = 0; quiz.missed = []; quiz.answered = false; quiz.fokus = ids;
+  quiz.qs = blandaInLatin(blandaInFritext(makeQuestions('blandat', quiz.antal, pool, typer), pool), pool, ['blandat']); quiz.i = 0; quiz.score = 0; quiz.missed = []; quiz.answered = false; quiz.fokus = ids;
   renderQ();
+}
+/* Written answers can't be skipped: in themes marked skrivkrav (where the exam expects a written answer),
+   every round has at least 2 in 10 free-text questions ("Vad används X till?"), swapped in at random places. */
+const FRITEXT_ANDEL = 0.2, LATIN_ANDEL = 0.2;
+// make sure at least `andel` of the round are questions of these types; swap them in at random places,
+// never replacing questions of the protected types (so the written-use questions stay when Latin ones are added)
+function blandaIn(qs, pool, typer, andel, skydda = []) {
+  const quota = Math.max(1, Math.round(qs.length * andel));
+  const har = qs.filter(q => typer.includes(q.typ)).length;
+  if (har >= quota) return qs;
+  const finns = new Set(qs.map(q => q.key));
+  const nya = makeQuestions(null, quota * 3, pool, typer).filter(q => !finns.has(q.key)).slice(0, quota - har);
+  const platser = shuffle(qs.map((q, i) => i).filter(i => !typer.includes(qs[i].typ) && !skydda.includes(qs[i].typ)));
+  nya.forEach((q, j) => { if (platser[j] !== undefined) qs[platser[j]] = q; });
+  return qs;
+}
+const blandaInFritext = (qs, pool) => blandaIn(qs, pool, ['skrivAnv'], FRITEXT_ANDEL);
+// typed Latin names, using only the kinds that fit the chosen themes (latinTyper)
+function blandaInLatin(qs, pool, temas) {
+  const typer = [...new Set(temas.flatMap(k => TEMAN[k].latinTyper || []))];
+  return typer.length ? blandaIn(qs, pool, typer, LATIN_ANDEL, ['skrivAnv']) : qs;
 }
 function startQuiz() {
   quiz.fokus = null;
   const typer = quiz.temas.flatMap(k => TEMAN[k].typer);   // all ticked themes mixed together
   quiz.qs = makeQuestions(null, quiz.antal, VAXTER, typer); quiz.i = 0; quiz.score = 0; quiz.missed = []; quiz.answered = false;
+  // only themes where the exam expects a written answer (medicinal use) get the guaranteed written questions
+  if (quiz.temas.some(k => TEMAN[k].skrivkrav)) quiz.qs = blandaInFritext(quiz.qs, VAXTER);
+  quiz.qs = blandaInLatin(quiz.qs, VAXTER, quiz.temas);   // and typed Latin names where the theme has them
   if (!quiz.qs.length) {
     app.innerHTML = `<div class="card"><h2>Inga frågor</h2><p>De kemiska strukturerna kunde inte laddas. Kontrollera internetanslutningen och ladda om sidan, eller välj ett annat tema.</p><div class="btn-row"><button class="btn" onclick="viewQuiz()">Byt tema</button></div></div>`;
     return;
@@ -1336,7 +1413,7 @@ function renderQ() {
   if (quiz.i >= quiz.qs.length) return quizDone();
   const q = quiz.qs[quiz.i];
   const answerPart = `<div class="q-text">${q.q}</div>
-    ${q.skriv ? typeFormHTML() : `<div class="opts ${q.molOpts ? 'opts-mol' : ''}">${q.opts.map((o, k) => `<button class="opt ${q.molOpts ? 'opt-mol' : ''}" data-k="${k}" ${q.molOpts ? `aria-label="Struktur ${k + 1}"` : ''}>${o.html}</button>`).join('')}</div>`}
+    ${q.skriv ? typeFormHTML() : q.fritext ? fritextFormHTML() : `<div class="opts ${q.molOpts ? 'opts-mol' : ''}">${q.opts.map((o, k) => `<button class="opt ${q.molOpts ? 'opt-mol' : ''}" data-k="${k}" ${q.molOpts ? `aria-label="Struktur ${k + 1}"` : ''}>${o.html}</button>`).join('')}</div>`}
     <div id="qfb"></div>`;
   // with a structure: structure on the left and the question on the right (desktop); stacked on phones
   // four structures to choose from: on desktop they fill the left side, question and feedback on the right
@@ -1347,7 +1424,66 @@ function renderQ() {
       : q.molOpts ? `<div class="mol-q">${answerPart}</div>` : answerPart}
     </div>`;
   if (q.skriv) wireTypeForm(answerTyped);
+  else if (q.fritext) wireTypeForm(answerFritext);
   else app.querySelectorAll('.opt').forEach(b => b.addEventListener('click', () => answerQ(+b.dataset.k)));
+}
+
+/* ---------- free-text answers ("Vad används X till?") ---------- */
+// lower case, no punctuation, single spaces
+const normText = s => ' ' + s.toLowerCase().replace(/[^a-zåäöéü0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim() + ' ';
+function lev(a, b) {                                        // edit distance (number of letters to change)
+  const d = Array.from({ length: a.length + 1 }, (_, i) => [i]);
+  for (let j = 1; j <= b.length; j++) d[0][j] = j;
+  for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++)
+    d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+  return d[a.length][b.length];
+}
+// does the answer contain this word stem? (inside a word is fine; longer stems may have a small typo)
+function harStam(text, words, stem) {
+  if (stem.includes(' ')) return text.includes(' ' + stem);
+  if (stem.length < 3) return words.some(w => w.startsWith(stem));        // e.g. "ms"
+  if (words.some(w => w.includes(stem))) return true;                     // also inside compounds: "småsår", "sömnbesvär"
+  const tol = stem.length >= 10 ? 2 : stem.length >= 6 ? 1 : 0;
+  if (!tol) return false;
+  return words.some(w => [stem.length - 1, stem.length, stem.length + 1].some(L => w.length >= L - 1 && lev(stem, w.slice(0, L)) <= tol));
+}
+function gradeFritext(svar, p) {
+  const text = normText(svar), words = text.trim().split(' ').filter(Boolean);
+  const begrepp = (NYCKLAR[p.id] || []).map(b => ({ ...b, hit: b.ord.some(st => harStam(text, words, st)) }));
+  const krav = begrepp.filter(b => !b.valfri);
+  const antal = krav.filter(b => b.hit).length;
+  return { begrepp, ok: antal === krav.length, delvis: antal > 0 && antal < krav.length };
+}
+const fritextFormHTML = () => `<p class="rule">Skriv med egna ord. Sedan jämför du med modellsvaret och bedömer själv om du hade rätt.</p>
+  <form class="typeform fritext" id="tform" autocomplete="off">
+    <textarea class="answer-input" id="tinput" rows="3" spellcheck="true" placeholder="Används vid …" aria-label="Ditt svar"></textarea>
+    <button class="btn btn-main" type="submit">Svara</button>
+  </form>`;
+/* Free text is judged by the STUDENT: they compare with the model answer and choose Rätt / Delvis / Fel.
+   The key-concept check is only a help (✓ = found in the answer) and a suggestion, never the verdict. */
+function answerFritext(input) {
+  if (quiz.answered) return;
+  quiz.answered = true;
+  const q = quiz.qs[quiz.i], p = byId(q.plant), res = gradeFritext(input.value, p);
+  const forslag = res.ok ? 'ratt' : res.delvis ? 'delvis' : 'fel';
+  const lista = res.begrepp.map(b => `<li>${b.hit ? '✓' : '○'} ${b.etikett}${b.valfri ? ' <span class="muted">(bra att ha med)</span>' : ''}</li>`).join('');
+  const knapp = (val, txt) => `<button class="btn ${val === forslag ? 'is-forslag' : ''}" data-val="${val}">${txt}${val === forslag ? ' <span class="small muted">(förslag)</span>' : ''}</button>`;
+  $('#qfb').innerHTML = `<div class="feedback fritext-fb">
+      <div><b>Modellsvar:</b> ${p.anvandning}</div>
+      <div class="more">Viktiga begrepp (✓ = finns i ditt svar):<ul class="begrepp">${lista}</ul></div>
+      <div class="more">Läs mer: <button class="linkbtn" onclick="openPlant('${p.id}')">${p.latin} (${p.sv})</button></div></div>
+    <p style="margin:.8rem 0 .3rem"><b>Jämför med modellsvaret. Hade du rätt?</b></p>
+    <div class="btn-row bedom">${knapp('ratt', '✅ Rätt')}${knapp('delvis', '🟡 Delvis')}${knapp('fel', '❌ Fel')}</div>
+    <div id="qnextwrap"></div>`;
+  app.querySelectorAll('.bedom .btn').forEach(b => b.addEventListener('click', () => {
+    const ok = b.dataset.val === 'ratt';
+    app.querySelectorAll('.bedom .btn').forEach(x => { x.disabled = true; x.classList.toggle('is-vald', x === b); });
+    input.classList.add(ok ? 'ok' : 'bad');
+    raknaSvar(); logResult(p.id, ok); uppdateraVikt(q.key, ok);           // Delvis and Fel both come back more often
+    if (ok) quiz.score++; else if (!quiz.missed.includes(p.id)) quiz.missed.push(p.id);
+    $('#qnextwrap').innerHTML = nextBtnHTML();
+    wireNext();
+  }));
 }
 function answerTyped(input) {
   if (quiz.answered) return;
