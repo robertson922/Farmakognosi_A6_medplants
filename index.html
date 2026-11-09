@@ -938,7 +938,7 @@ function viewHome() {
       ${weakest().length ? `<div class="svaga"><b>🎯 Dina svagaste växter just nu:</b>
         ${weakest().map(id => `<button class="linkbtn" onclick="openPlant('${id}')"><i>${byId(id).latin}</i></button>`).join(', ')}
         <div class="btn-row" style="margin-top:.6rem"><button class="btn btn-main" onclick="startFokus(weakest())">Öva på dem</button>
-        <button class="btn" onclick="if(confirm('Nollställa dina resultat?')){store.set('stats',{});store.set('qvikt',{});viewHome()}">↺ Nollställ</button></div></div>`
+        <button class="btn" onclick="if(confirm('Nollställa dina resultat?')){store.set('stats',{});store.set('qvikt',{});store.set('antalSvar',0);viewHome()}">↺ Nollställ</button></div></div>`
       : antalSvar() > 0 && antalSvar() < SVAGA_MIN_TOTALT ? `<p class="small muted svaga">🎯 När du har svarat på ${SVAGA_MIN_TOTALT} frågor visas här vilka växter du har svårast för (du har svarat på ${antalSvar()}).</p>` : ''}
     </div>
     <div class="tiles">
@@ -1303,7 +1303,9 @@ function logResult(pid, ok) {
 // plants answered wrong most often (share of wrong answers, then number of wrong answers).
 // Only once there is enough data: 40+ answers in total, and per plant 4+ answers with at least 40 % wrong.
 const SVAGA_MIN_TOTALT = 40, SVAGA_MIN_PER_VAXT = 4, SVAGA_MIN_ANDEL_FEL = 0.4;
-const antalSvar = () => Object.values(store.get('stats', {})).reduce((s, [r, w]) => s + r + w, 0);
+// every answered question counts (also rules questions, which aren't tied to one plant)
+const antalSvar = () => Math.max(store.get('antalSvar', 0), Object.values(store.get('stats', {})).reduce((s, [r, w]) => s + r + w, 0));
+const raknaSvar = () => store.set('antalSvar', antalSvar() + 1);
 function weakest(n = 4) {
   const st = store.get('stats', {});
   if (antalSvar() < SVAGA_MIN_TOTALT) return [];
@@ -1351,6 +1353,7 @@ function answerTyped(input) {
   if (quiz.answered) return;
   quiz.answered = true;
   const q = quiz.qs[quiz.i], p = byId(q.plant), res = checkLatin(input.value, p);
+  raknaSvar();
   logResult(p.id, res.ok);
   uppdateraVikt(q.key, res.ok);
   if (res.ok) quiz.score++; else if (!quiz.missed.includes(p.id)) quiz.missed.push(p.id);
@@ -1399,6 +1402,7 @@ function answerQ(k) {
   const q = quiz.qs[quiz.i], chosen = q.opts[k], ok = chosen.key === q.right;
   const missKey = q.typ === 'regel' || !q.plant ? 'regler' : q.plant;    // rules questions point back to the Regler page
   if (ok) quiz.score++; else if (!quiz.missed.includes(missKey)) quiz.missed.push(missKey);
+  raknaSvar();
   if (!['regel', 'klassPreparat', 'klassVal'].includes(q.typ)) logResult(q.plant, ok);   // product-class questions say nothing about the plant
   uppdateraVikt(q.key, ok);
   app.querySelectorAll('.opt').forEach((b, j) => {
@@ -1513,6 +1517,7 @@ function renderBild() {
     <div id="bfb"></div></div></div></div>`;
   wireTypeForm(input => {
     const res = checkLatin(input.value, target, true); if (res.ok) bild.score++;
+    raknaSvar();
     logResult(p.id, res.ok);
     input.classList.add(res.ok ? 'ok' : 'bad');
     $('#bfb').innerHTML = typedFeedbackHTML(res, target) + `
