@@ -100,6 +100,27 @@ p { margin: .3rem 0 .7rem; }
 .photo { width: 100%; max-height: 46vh; object-fit: contain; background: #020617; border-radius: .75rem; display: block; }
 .credit { font-size: .75rem; color: var(--muted); margin-top: .3rem; }
 .credit a { color: var(--muted); }
+/* must-know box */
+.maste { border: 1px solid var(--line); background: rgba(15, 23, 42, .55); border-radius: .9rem; padding: .8rem 1rem; margin-bottom: 1rem; }
+.maste-h { font-weight: 700; color: var(--soft); margin-bottom: .3rem; }
+.maste dl { margin: 0; }
+.maste .mrow { display: grid; grid-template-columns: 9.5rem minmax(0, 1fr); gap: .6rem; padding: .25rem 0; border-top: 1px solid var(--panel2); }
+.maste .mrow:first-child { border-top: 0; }
+.maste dt { font-size: .8rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--acc-hi); padding-top: .15rem; }
+.maste dd { margin: 0; }
+@media (max-width: 480px) { .maste .mrow { grid-template-columns: 1fr; gap: 0; } }
+/* compound class and pathway under a structure */
+.mol-cap .bio { display: block; font-size: .78rem; color: var(--muted); margin-top: .1rem; }
+/* weakest plants on the start page */
+.svaga { margin-top: .8rem; padding-top: .8rem; border-top: 1px solid var(--panel2); }
+.credit .ptext { display: block; color: var(--soft); font-size: .92rem; margin-bottom: .15rem; }
+/* small photo thumbnails under a plant's main photo */
+.gallery-thumbs { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .55rem; }
+.gthumb { width: 4.2rem; height: 4.2rem; padding: 0; border: 2px solid var(--line); border-radius: .6rem; overflow: hidden; background: #020617; }
+.gthumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.gthumb:hover { border-color: var(--soft); }
+.gthumb.is-on { border-color: var(--acc); box-shadow: 0 0 0 2px var(--acc-bg); }
+.card a { color: var(--acc-hi); }
 
 details.plant { background: var(--panel); border: 1px solid var(--panel2); border-radius: 1rem; margin-bottom: .6rem; }
 details.plant > summary { list-style: none; padding: .8rem 1rem; cursor: pointer; display: flex; align-items: center; gap: .8rem; }
@@ -183,6 +204,82 @@ details.plant .body { padding: 0 1rem 1rem; }
 }
 @media (min-width: 720px) { .modal { align-items: center; } .modal .sheet { border-radius: 1.1rem; } }
 .sheet-close { float: right; }
+
+/* the two-part layouts below are plain stacked blocks on phones */
+.fakta-side .search { margin-bottom: .6rem; }
+.fakta-item { display: flex; align-items: center; gap: .7rem; width: 100%; text-align: left; background: none; border: 2px solid transparent; border-radius: .8rem; padding: .4rem .5rem; }
+.fakta-item:hover { background: var(--panel2); }
+.fakta-item.is-on { border-color: var(--acc); background: var(--acc-bg); }
+.fakta-item .thumb { width: 2.6rem; height: 2.6rem; border-radius: .5rem; object-fit: cover; flex: none; background: #020617; display: flex; align-items: center; justify-content: center; }
+.fakta-item .nm { line-height: 1.25; font-size: .95rem; }
+.fakta-item .nm small { display: block; color: var(--muted); font-size: .82rem; }
+
+/* big monitors: the facts next to the photo flow into two columns so lines don't get too long */
+@media (min-width: 1600px) {
+  .fakta-detail .detail-top .facts, .modal .detail-top .facts, .flash .detail-top .facts { column-count: 2; column-gap: 2.5rem; }
+}
+/* small laptops (1024–1199 px): menu on its own row under the title, so it never wraps */
+@media (min-width: 1024px) and (max-width: 1199px) {
+  .top-inner { flex-direction: column; align-items: flex-start !important; gap: .5rem !important; }
+  nav.tabs { justify-content: flex-start !important; }
+  .fakta-side { top: 8.5rem !important; max-height: calc(100vh - 10rem) !important; }
+}
+/* ---------- DESKTOP (1024 px and wider): use the width instead of one narrow column ---------- */
+@media (min-width: 1024px) {
+  body { font-size: 17.5px; }
+  .top-inner, main { max-width: 1800px; }   /* fills a typical 1920 px monitor; laptops (1280–1536 px) use almost the full width */
+  .top-inner { display: flex; align-items: center; justify-content: space-between; gap: 2rem; }
+  h1 { margin: 0; white-space: nowrap; }
+  nav.tabs { margin: 0; padding: 0; overflow: visible; flex-wrap: wrap; justify-content: flex-end; }
+  main { padding: 1.5rem 1.5rem; }
+  header.top { padding-left: 1.5rem; padding-right: 1.5rem; }
+
+  /* start page: a welcome banner, then the five choices side by side as large cards */
+  .home-grid > .card { padding: 1.75rem 2rem; }
+  .home-grid > .card h2 { font-size: 1.8rem; }
+  .home-grid > .card p { max-width: 62rem; font-size: 1.1rem; }
+  .home-grid .tiles { margin-top: 1.25rem; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 1rem; }
+  .home-grid .tile { flex-direction: column; gap: .7rem; padding: 1.4rem 1.2rem; min-height: 13rem; }
+  .home-grid .tile .ico { font-size: 2.4rem; }
+  .home-grid .tile b { font-size: 1.2rem; margin-bottom: .3rem; }
+
+  /* Fakta: plant list on the left, the chosen plant on the right */
+  .fakta-split { display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 1.5rem; align-items: start; }
+  .fakta-side { position: sticky; top: 5.5rem; max-height: calc(100vh - 7rem); overflow-y: auto; padding: .8rem; }
+  .fakta-detail { padding: 1.5rem 1.75rem; }
+
+  /* plant facts (Fakta, fact pop-up, flashcard back):
+     a large photo beside the main facts, structures across the full width, longer texts in two columns */
+  .detail-top { display: grid; grid-template-columns: minmax(320px, 5fr) minmax(0, 7fr); gap: 2rem; align-items: start; }
+  .detail-top .photo { height: 460px; max-height: none; object-fit: contain; }   /* fixed height: switching photos doesn't make the page jump */
+  .detail-top .facts > .frow:first-child dt { margin-top: 0; }
+  .detail-structs .mol-grid { grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: .9rem; }
+  .detail-structs { margin-top: .6rem; }
+  .facts.regler { column-count: 2; column-gap: 2.5rem; }
+  .facts.regler .frow { break-inside: avoid; }
+  .facts.regler > .frow:first-child dt { margin-top: 0; }
+  .detail-top .frow { break-inside: avoid; }
+  .modal .sheet { max-width: 1240px; padding: 1.5rem 1.75rem 2rem; }
+
+  /* quiz, flashcards, matching: a comfortable reading width in the middle */
+  main[data-view="quiz"] > .card, main[data-view="kort"] > .card, main[data-view="bild"] > .card, main[data-view="para"] > * { max-width: 920px; margin-left: auto; margin-right: auto; }
+  main[data-view] > .card.wide { max-width: 1180px; }
+  /* picture or structure on the left, question and answers on the right */
+  .qa-split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2rem; align-items: start; }
+  .qa-split .photo, .qa-split .mol-big { max-height: none; max-width: none; margin: 0; }
+  .qa-split .photo { max-height: 70vh; }
+  .opts:not(.opts-mol) { grid-template-columns: 1fr 1fr; }
+  .qa-split .opts:not(.opts-mol) { grid-template-columns: 1fr; }
+  /* "Vilken av strukturerna …": large 2 × 2 structures on the left, question + feedback on the right */
+  .mol-q { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); grid-template-areas: "opts text" "opts fb"; grid-template-rows: auto 1fr; gap: 0 2rem; align-items: start; }
+  .mol-q .q-text { grid-area: text; }
+  .mol-q .opts { grid-area: opts; }
+  .mol-q #qfb { grid-area: fb; }
+  .mol-q #qfb .feedback { margin-top: 0; }
+  .opt.opt-mol .mol-cap { font-size: .95rem; color: inherit; }
+  .flash { min-height: 0; }
+  .flash .front .photo { max-height: 55vh; }
+}
 </style>
 </head>
 <body>
@@ -296,7 +393,7 @@ const VAXTER = [
   del: 'Torkat blad', delText: 'Torkat blad.',
   substanser: ['ginkgolid A och B', 'bilobalid'],
   substansText: 'De viktigaste aktiva substanserna anses vara ginkgolid A, ginkgolid B och bilobalid (den senare möjligen en nedbrytningsprodukt). Många preparat innehåller standardiserat extrakt, t.ex. <b>EGb 761</b> (eller LI 1370). EGb 761 innehåller minst 24,0 % ginkgoflavon(ol)glykosider, minst 6,0 % terpenlaktoner (3,1 % ginkgolider och 2,9 % bilobalid), mindre än 5 ppm ginkgolsyror (t.ex. ginkgolsyra C17:1) och mindre än 0,1 % biflavoner.',
-  mekanism: 'Exakt mekanism för extraktet är okänd. Ginkgolider blockerar glycinreceptorns (α<sub>1</sub>-GlyR) jonkanal (en kloridkanal). Ginkgolid B är antagonist vid PAF-receptorn och motverkar trombocytaggregation; den påverkar även pro-MMP-9 (ökad frisättning av MMP-9) och ökar bildningen av cAMP.',
+  mekanism: 'Exakt mekanism för extraktet är okänd. Ginkgolider blockerar glycinreceptorns (α<sub>1</sub>-GlyR) jonkanal (en kloridkanal). Ginkgolid B är antagonist till PAF vid PAF-receptorn. Ginkgolid B aktiverar även pro-MMP-9, så att frisättningen av MMP-9 (som hämmar trombocytaggregation) ökar, och ökar bildningen av cAMP. Båda dessa effekter motverkar trombocytaggregation.',
   anvandning: '<b>Bio-Biloba</b> (TVBL, det enda preparatet kvar i Sverige): långvariga symtom hos äldre som minnesbesvär, koncentrationssvårigheter, yrsel, öronsusningar och trötthetskänsla, efter att läkare uteslutit allvarlig bakomliggande sjukdom.',
   anvKort: ['minnes- och koncentrationsbesvär hos äldre'],
   preparat: ['Bio-Biloba'], sakerhet: '', sakKort: [], tema: ['minne'], extra: ''
@@ -308,7 +405,7 @@ const VAXTER = [
   substanser: ['harpagosid', 'procumbid', 'harpagid'],
   substansText: 'Tre iridoida glykosider: harpagosid (viktigast), procumbid och harpagid.',
   mekanism: '',
-  anvandning: 'Känd från San-folkets traditionella medicin mot ledbesvär. Registrerade TVBL i Sverige (ATC-kod M09AX) är <b>Flexiloges</b> och <b>Giduxa</b>, som används för att lindra smärta vid lätt ledförslitning (artros) och lättare ledsmärta, samt vid lättare matsmältningsbesvär (uppblåsthet, gaser och tillfällig aptitförlust).',
+  anvandning: 'Känd från San-folkets traditionella medicin mot ledbesvär. Registrerade TVBL i Sverige (ATC-kod M09AX) är <b>Flexiloges</b> och <b>Giduxa</b> (Giduxa kan innehålla <i>H. procumbens</i> eller <i>H. zeyheri</i>), som används för att lindra smärta vid lätt ledförslitning (artros) och lättare ledsmärta, samt vid lättare matsmältningsbesvär (uppblåsthet, gaser och tillfällig aptitförlust).',
   anvKort: ['smärta vid lätt artros och lättare ledsmärta'],
   preparat: ['Flexiloges', 'Giduxa'], sakerhet: '', sakKort: [], tema: ['leder', 'mage'], extra: ''
 },
@@ -325,6 +422,7 @@ const VAXTER = [
 },
 {
   id: 'hypericum', latin: 'Hypericum perforatum', sv: 'johannesört',
+  latinArter: ['Hypericum maculatum'],   // other species in the course: accepted in typed quiz answers, not for the photo
   familj: 'Clusiaceae', slakte: 'Familjen Clusiaceae (även kallad Hypericaceae eller Guttiferae). Släktet omfattar cirka 370 arter; i föreläsningen avbildas <i>H. perforatum</i> och <i>H. maculatum</i>.',
   del: 'Ört', delText: 'Ört (herba).',
   substanser: ['hypericin', 'hyperforin', 'amentoflavon'],
@@ -363,12 +461,13 @@ const VAXTER = [
 },
 {
   id: 'passiflora', latin: 'Passiflora incarnata', sv: 'passionsblomma',
+  latinArter: ['Passiflora edulis'],     // other species in the course: accepted in typed quiz answers, not for the photo
   familj: 'Passifloraceae', slakte: 'Familjen Passifloraceae. Släktet omfattar drygt 500 arter. <i>P. edulis</i> odlas i stor skala för sina ätliga frukter.',
   del: 'Ört', delText: 'Ört (herba).',
   substanser: ['flavonoider och triterpenoider'],
   substansText: 'Över 110 fytokemiska substanser har identifierats i <i>P. edulis</i>; flavonoider och triterpenoider är de största grupperna.',
   mekanism: '',
-  anvandning: '<i>P. incarnata</i> ingår i TVBL-preparaten <b>Pascoflair</b> och <b>Sedix</b> (ATC-kod N05CM), som används vid lindriga symtom på nervös anspänning, t.ex. lindrig oro, irritabilitet och tillfälliga insomningsbesvär.',
+  anvandning: '<i>P. incarnata</i> ingår i två TVBL (ATC-kod N05CM, övriga sömnmedel och lugnande medel):<ul><li><b>Pascoflair</b>: används vid lindrig oro och tillfälliga insomningsbesvär.</li><li><b>Sedix</b>: används vid lindriga symtom på nervös anspänning, såsom oro, irritabilitet och tillfälliga insomningsbesvär.</li></ul>',
   anvKort: ['nervös anspänning och irritabilitet'],
   preparat: ['Pascoflair', 'Sedix'], sakerhet: '', sakKort: [], tema: ['lugn'], extra: ''
 },
@@ -429,6 +528,7 @@ const STRUKTURER = [
   { id: 'alkylamid', namn: 'alkylamid (dodekatetraensyra-isobutylamid)', vaxt: 'echinacea', smiles: 'C/C=C\\C=C/CC/C=C/C=C/C(=O)NCC(C)C' }, // CID 11413953 (2E,4E,8Z,10Z)
   { id: 'efedrin', namn: '(–)-efedrin', vaxt: 'ephedra', smiles: 'C[C@@H]([C@@H](C1=CC=CC=C1)O)NC' },                                  // CID 9294
   { id: 'pseudoefedrin', namn: '(+)-pseudoefedrin', vaxt: 'ephedra', smiles: 'C[C@@H]([C@H](C1=CC=CC=C1)O)NC' },                        // CID 7028
+  { id: 'ginkgolidA', namn: 'ginkgolid A', vaxt: 'ginkgo', smiles: 'C[C@@H]1C(=O)O[C@@H]2[C@]1([C@@]34C(=O)O[C@H]5[C@]3(C2)[C@@]6([C@@H](C5)C(C)(C)C)[C@H](C(=O)O[C@H]6O4)O)O' }, // CID 9909368
   { id: 'ginkgolidB', namn: 'ginkgolid B', vaxt: 'ginkgo', smiles: 'C[C@@H]1C(=O)O[C@@H]2[C@]1([C@@]34C(=O)O[C@H]5[C@]3([C@@H]2O)[C@@]6([C@@H](C5)C(C)(C)C)[C@H](C(=O)O[C@H]6O4)O)O' }, // CID 11973122
   { id: 'bilobalid', namn: 'bilobalid', vaxt: 'ginkgo', smiles: 'CC(C)(C)[C@@]1(C[C@H]2[C@@]3([C@]14[C@H](C(=O)O[C@H]4OC3=O)O)CC(=O)O2)O' }, // CID 73581
   { id: 'harpagosid', namn: 'harpagosid', vaxt: 'harpago', smiles: 'C[C@@]1(C[C@H]([C@]2([C@@H]1[C@@H](OC=C2)O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)O)O)O)OC(=O)/C=C/C4=CC=CC=C4' }, // CID 5281542
@@ -445,6 +545,155 @@ const STRUKTURER = [
   { id: 'rheinantron', namn: 'rheinantron', vaxt: 'senna', smiles: 'C1C2=C(C(=CC=C2)O)C(=O)C3=C1C=C(C=C3O)C(=O)O' },                      // CID 119396
   { id: 'valerensyra', namn: 'valerensyra', vaxt: 'valeriana', smiles: 'C[C@@H]1CC[C@H](C2=C(CC[C@H]12)C)/C=C(\\C)/C(=O)O' },          // CID 6440940
   { id: 'valerinsyra', namn: 'valerinsyra (isovaleriansyra)', vaxt: 'valeriana', smiles: 'CC(C)CC(=O)O' }                               // CID 10430
+];
+
+/* =====================================================================
+   BIOSYNTHESIS: compound class and the pathways that build each structure.
+   Pathway names are the same as in the biosynthesis trainer (index.html).
+   vagar: ISO = MVA-/MEP-vägen, SHIK = shikimisyravägen, ACET = acetat-malonatvägen,
+          ALK = alifatisk aminosyrasyntes, GLY = kolhydratsyntes
+   ===================================================================== */
+const VAGNAMN = { ISO: 'MVA-/MEP-vägen', SHIK: 'Shikimisyravägen', ACET: 'Acetat-malonatvägen', ALK: 'Alifatisk aminosyrasyntes', GLY: 'Kolhydratsyntes' };
+const BIOSYNTES = {
+  hyoscyamin:     { klass: 'tropanalkaloid', vagar: ['ALK', 'SHIK'], not: 'Tropanringen från ornitin, tropasyran från fenylalanin.' },
+  atropin:        { klass: 'tropanalkaloid', vagar: ['ALK', 'SHIK'], not: 'Tropanringen från ornitin, tropasyran från fenylalanin.' },
+  skopolamin:     { klass: 'tropanalkaloid', vagar: ['ALK', 'SHIK'], not: 'Som hyoscyamin, men med en epoxidbrygga i tropanringen.' },
+  thc:            { klass: 'cannabinoid (terpenofenol)', vagar: ['ACET', 'ISO'], not: 'Olivetolsyra (polyketid) plus en monoterpenenhet (geranyldifosfat).' },
+  cbd:            { klass: 'cannabinoid (terpenofenol)', vagar: ['ACET', 'ISO'], not: 'Olivetolsyra (polyketid) plus en monoterpenenhet (geranyldifosfat).' },
+  curcumin:       { klass: 'diarylheptanoid (curcuminoid)', vagar: ['SHIK', 'ACET'], not: 'Två fenylpropanoidenheter (feruloyl) sammanfogade med malonyl.' },
+  digoxin:        { klass: 'kardenolid (hjärtglykosid)', vagar: ['ISO', 'GLY'], not: 'Steroid med femledad laktonring, plus tre digitoxos-socker.' },
+  digitoxin:      { klass: 'kardenolid (hjärtglykosid)', vagar: ['ISO', 'GLY'], not: 'Steroid med femledad laktonring, plus tre digitoxos-socker.' },
+  echinakosid:    { klass: 'fenyletanoidglykosid', vagar: ['SHIK', 'GLY'], not: 'Kaffesyra och hydroxityrosol (från fenylalanin/tyrosin) plus socker.' },
+  alkylamid:      { klass: 'alkylamid (fettsyraamid)', vagar: ['ACET', 'ALK'], not: 'Omättad fettsyra plus isobutylamin (från valin).' },
+  efedrin:        { klass: 'fenylalkylamin (protoalkaloid)', vagar: ['SHIK'], not: 'Från fenylalanin; kvävet sitter utanför ringen.' },
+  pseudoefedrin:  { klass: 'fenylalkylamin (protoalkaloid)', vagar: ['SHIK'], not: 'Från fenylalanin; kvävet sitter utanför ringen.' },
+  ginkgolidA:     { klass: 'diterpenlakton', vagar: ['ISO'], not: 'Diterpen (C20) med flera laktonringar och en tert-butylgrupp.' },
+  ginkgolidB:     { klass: 'diterpenlakton', vagar: ['ISO'], not: 'Diterpen (C20) med flera laktonringar och en tert-butylgrupp.' },
+  bilobalid:      { klass: 'seskviterpenlakton', vagar: ['ISO'], not: 'C15, troligen en nedbrytningsprodukt av ginkgoliderna.' },
+  harpagosid:     { klass: 'iridoidglykosid', vagar: ['ISO', 'GLY', 'SHIK'], not: 'Iridoid (monoterpen) plus glukos, förestrad med kanelsyra.' },
+  hederasaponinB: { klass: 'triterpensaponin', vagar: ['ISO', 'GLY'], not: 'Triterpen (C30) med sockerkedjor.' },
+  hypericin:      { klass: 'naftodiantron', vagar: ['ACET'], not: 'Polyketid; två antronenheter sammanfogade.' },
+  hyperforin:     { klass: 'acylfloroglucinol', vagar: ['ACET', 'ISO'], not: 'Floroglucinolkärna (polyketid) med flera prenylgrupper.' },
+  amentoflavon:   { klass: 'biflavonoid', vagar: ['SHIK', 'ACET'], not: 'Två flavonenheter; varje flavon byggs av kumaroyl (shikimisyra) plus tre malonyl.' },
+  rg1:            { klass: 'triterpensaponin (dammarantyp)', vagar: ['ISO', 'GLY'], not: 'Triterpen (C30) med två glukosenheter.' },
+  morfin:         { klass: 'morfinanalkaloid (bensylisokinolin)', vagar: ['SHIK'], not: 'Byggs av två tyrosinenheter.' },
+  kodein:         { klass: 'morfinanalkaloid (bensylisokinolin)', vagar: ['SHIK'], not: 'Som morfin, men med en metylerad fenol (OCH₃).' },
+  noskapin:       { klass: 'ftalidisokinolinalkaloid (bensylisokinolin)', vagar: ['SHIK'], not: 'Från tyrosin.' },
+  papaverin:      { klass: 'bensylisokinolinalkaloid', vagar: ['SHIK'], not: 'Från tyrosin; helt aromatisk isokinolinring.' },
+  sennosidA:      { klass: 'diantronglykosid (antranoid)', vagar: ['ACET', 'GLY'], not: 'I <i>Senna</i> byggs antranoiderna som polyketider; två antronenheter plus två glukos.' },
+  rheinantron:    { klass: 'antron (antranoid)', vagar: ['ACET'], not: 'Polyketid; den aktiva formen som bildas av sennosiderna i tarmen.' },
+  valerensyra:    { klass: 'seskviterpen', vagar: ['ISO'], not: 'C15-terpen med en karboxylsyra.' },
+  valerinsyra:    { klass: 'kortkedjig fettsyra', vagar: ['ALK'], not: 'Bildas från leucin.' }
+};
+const vagText = s => (BIOSYNTES[s.id] ? BIOSYNTES[s.id].vagar.map(v => VAGNAMN[v]).join(' + ') : '');
+const bioLine = s => BIOSYNTES[s.id] ? `<span class="bio">${BIOSYNTES[s.id].klass} · ${vagText(s)}</span>` : '';
+
+/* =====================================================================
+   CONTRAST QUESTIONS: things that are easy to mix up. Right answer first.
+   vaxt = plant for "Läs mer".
+   ===================================================================== */
+const KONTRASTER = [
+  { vaxt: 'senna', q: 'Senna och loppfrö används båda mot förstoppning. Hur skiljer sig verkningssätten?',
+    svar: ['Senna är tarmretande (sennosider → rheinantron); loppfrö är ett bulkmedel (fibrer i fröskalet)', 'Loppfrö är tarmretande; senna är ett bulkmedel', 'Båda är bulkmedel som sväller i tarmen', 'Båda är tarmretande via antroner'] },
+  { vaxt: 'senna', q: 'Vilken av dessa laxerande växter kan ge laxermedelsberoende vid överanvändning?',
+    svar: ['Senna', 'Loppfrö', 'Gurkmeja', 'Djävulsklo'], vaxtSvar: true },
+  { vaxt: 'hypericum', q: 'Vänderot, passionsblomma och johannesört används alla vid oro eller sömnbesvär. Vilken används ensam vid lätt nedstämdhet?',
+    svar: ['Johannesört', 'Vänderot', 'Passionsblomma', 'Ingen av dem'] },
+  { vaxt: 'hypericum', q: 'Vilken av de lugnande växterna ger allvarliga läkemedelsinteraktioner via CYP3A-induktion?',
+    svar: ['Johannesört (hyperforin)', 'Vänderot (valerensyra)', 'Passionsblomma (flavonoider)', 'Alla tre i lika hög grad'] },
+  { vaxt: 'valeriana', q: 'Vilken substans anses ge vänderotens lugnande effekt, och hur?',
+    svar: ['Valerensyra, som modulerar GABA<sub>A</sub>-receptorer', 'Valerinsyra, som ger den speciella lukten', 'Hyperforin, som aktiverar TRPC6', 'Flavonoider, som hämmar MAO'] },
+  { vaxt: 'hedera', q: 'Murgröna, efedra och opiumvallmo kopplas alla till hosta. Vilken kombination stämmer?',
+    svar: ['Murgröna: slemlösande (Prospan) · efedra: efedrin i Mollipect · vallmo: noskapin är hostdämpande', 'Murgröna: hostdämpande · efedra: slemlösande · vallmo: papaverin är hostdämpande', 'Murgröna: efedrin · efedra: saponiner · vallmo: morfin är slemlösande', 'Alla tre är slemlösande via saponiner'] },
+  { vaxt: 'atropa', q: 'Vad skiljer atropin från (–)-hyoscyamin?',
+    svar: ['Atropin är ett racemat av (–)- och (+)-hyoscyamin; bara (–)-formen är aktiv', 'Atropin har en epoxidbrygga i tropanringen', 'Atropin är en glykosid av hyoscyamin', 'De kommer från olika växtfamiljer'] },
+  { vaxt: 'atropa', q: 'Vad skiljer skopolamin strukturellt från hyoscyamin?',
+    svar: ['Skopolamin har en epoxidbrygga (en extra syreatom) i tropanringen', 'Skopolamin är ett racemat', 'Skopolamin saknar kväve', 'Skopolamin har en extra metoxigrupp på bensenringen'] },
+  { vaxt: 'ephedra', q: 'Hur förhåller sig (–)-efedrin och (+)-pseudoefedrin till varandra?',
+    svar: ['De är diastereomerer: samma konstitution, olika konfiguration vid ett av två stereocentrum', 'De är enantiomerer (spegelbilder)', 'De har olika summaformel', 'De är samma ämne med olika namn'] },
+  { vaxt: 'papaver', q: 'Hur skiljer sig kodein strukturellt från morfin?',
+    svar: ['Kodein har en metoxigrupp (OCH₃) där morfin har en fenolisk OH-grupp', 'Kodein saknar kväve', 'Kodein har en extra ring', 'Kodein är ett racemat av morfin'] },
+  { vaxt: 'digitalis', q: 'Hur skiljer sig digoxin från digitoxin?',
+    svar: ['Digoxin har en extra OH-grupp på steroidskelettet', 'Digoxin har fler sockerenheter', 'Digitoxin saknar laktonring', 'De kommer från olika växtfamiljer'] },
+  { vaxt: 'ginkgo', q: 'Hur skiljer sig ginkgolid B från ginkgolid A?',
+    svar: ['Ginkgolid B har en extra OH-grupp', 'Ginkgolid B är en seskviterpen', 'Ginkgolid B saknar laktonringar', 'Ginkgolid B är en glykosid'] },
+  { vaxt: 'cannabis', q: 'Vilket påstående om THC och CBD stämmer?',
+    svar: ['THC är berusande; CBD är inte berusande, och dess antikonvulsiva effekt går inte via cannabinoidreceptorer', 'CBD är berusande; THC är inte berusande', 'Båda är berusande', 'CBD verkar antikonvulsivt via CB1-receptorer'] },
+  { vaxt: 'cannabis', q: 'Hur skiljer sig Sativex från Epidyolex?',
+    svar: ['Sativex: THC + CBD vid spasticitet vid MS · Epidyolex: ren CBD vid Dravets syndrom och LGS', 'Sativex: ren CBD vid epilepsi · Epidyolex: THC + CBD vid MS', 'Båda innehåller bara THC', 'Sativex är ett TVBL, Epidyolex ett VBL'] },
+  { vaxt: 'echinacea', q: 'Röd solhatt: vilken växtdel används till vad?',
+    svar: ['Rot: traditionellt vid förkylning och mild akne · färsk ört (pressaft): väletablerat vid förkylning, traditionellt vid småsår', 'Rot: väletablerat vid förkylning · färsk ört: traditionellt vid akne', 'Bara blommorna används', 'Rot och ört används på samma sätt'] },
+  { vaxt: 'papaver', q: 'Opiumvallmons alkaloider: vilken kombination av effekter stämmer?',
+    svar: ['Morfin: smärtstillande · noskapin: hostdämpande · papaverin: kramplösande', 'Morfin: hostdämpande · noskapin: kramplösande · papaverin: smärtstillande', 'Morfin: kramplösande · noskapin: smärtstillande · papaverin: hostdämpande', 'Alla tre är främst smärtstillande'] }
+];
+
+/* =====================================================================
+   RULES: product classes (from the course's product table, the lecture and FASS).
+   klass: VBL | TVBL | LM (vanligt läkemedel) | NLM. vaxt = course plant id for "Läs mer" (or null).
+   ===================================================================== */
+const KLASS_NAMN = {
+  VBL: 'VBL (växtbaserat läkemedel)', TVBL: 'TVBL (traditionellt växtbaserat läkemedel)',
+  LM: 'vanligt läkemedel', NLM: 'naturläkemedel (NLM)'
+};
+const PREPARATLISTA = [
+  // VBL
+  { namn: 'Echinagard', klass: 'VBL', innehall: 'röd solhatt (<i>Echinacea purpurea</i>), pressaft av färsk ört', vaxt: 'echinacea' },
+  { namn: 'Prospan', klass: 'VBL', innehall: 'murgröna (<i>Hedera helix</i>), torkat blad', vaxt: 'hedera' },
+  { namn: 'Mucofyl', klass: 'VBL', innehall: 'murgröna och timjan', vaxt: 'hedera' },
+  { namn: 'Sefitude', klass: 'VBL', innehall: 'vänderot (<i>Valeriana officinalis</i>), rot', vaxt: 'valeriana' },
+  { namn: 'Valerina Forte', klass: 'VBL', innehall: 'vänderot, rot', vaxt: 'valeriana' },
+  { namn: 'Lunixen', klass: 'VBL', innehall: 'vänderot, rot', vaxt: 'valeriana' },
+  { namn: 'Iberogast', klass: 'VBL', innehall: 'nio växter, bl.a. blomsteriberis, kamomill och pepparmynta', vaxt: null },
+  { namn: 'Colpermin', klass: 'VBL', innehall: 'pepparmyntolja', vaxt: null },
+  { namn: 'Curbisal', klass: 'VBL', innehall: 'sågpalmetto (<i>Serenoa repens</i>), frukt', vaxt: null },
+  { namn: 'Sabamin', klass: 'VBL', innehall: 'sågpalmetto, frukt', vaxt: null },
+  { namn: 'Klimadynon', klass: 'VBL', innehall: 'läkesilverax (<i>Cimicifuga racemosa</i>), jordstam', vaxt: null },
+  { namn: 'Remifemin', klass: 'VBL', innehall: 'läkesilverax, jordstam', vaxt: null },
+  { namn: 'Solvenix', klass: 'VBL', innehall: 'hästkastanj (<i>Aesculus hippocastanum</i>), frö', vaxt: null },
+  { namn: 'Cernitol Novum', klass: 'VBL', innehall: 'pollenextrakt från råg, timotej och majs', vaxt: null },
+  // TVBL
+  { namn: 'Bio-Biloba', klass: 'TVBL', innehall: 'ginkgo (<i>Ginkgo biloba</i>), torkat blad', vaxt: 'ginkgo' },
+  { namn: 'Echinaforce', klass: 'TVBL', innehall: 'röd solhatt, rot och ört', vaxt: 'echinacea' },
+  { namn: 'Esberitox', klass: 'TVBL', innehall: 'läkerudbeckia, röd solhatt, baptisia och tuja', vaxt: 'echinacea' },
+  { namn: 'Kan Jang', klass: 'TVBL', innehall: 'röd solhatt, rysk rot och malabarnöt', vaxt: 'echinacea' },
+  { namn: 'Flexiloges', klass: 'TVBL', innehall: 'djävulsklo (<i>Harpagophytum procumbens</i>), rot', vaxt: 'harpago' },
+  { namn: 'Giduxa', klass: 'TVBL', innehall: 'djävulsklo (<i>H. procumbens</i> eller <i>H. zeyheri</i>), rot', vaxt: 'harpago' },
+  { namn: 'Hypermin', klass: 'TVBL', innehall: 'johannesört (<i>Hypericum perforatum</i>), färsk ört', vaxt: 'hypericum' },
+  { namn: 'Pascoflair', klass: 'TVBL', innehall: 'passionsblomma (<i>Passiflora incarnata</i>), ört', vaxt: 'passiflora' },
+  { namn: 'Sedix', klass: 'TVBL', innehall: 'passionsblomma, ört', vaxt: 'passiflora' },
+  { namn: 'Dormeasan', klass: 'TVBL', innehall: 'humle och vänderot', vaxt: 'valeriana' },
+  { namn: 'Valerina Natt', klass: 'TVBL', innehall: 'humle, citronmeliss och vänderot', vaxt: 'valeriana' },
+  { namn: 'Bronwel comp', klass: 'TVBL', innehall: 'läkemalva och timjan', vaxt: null },
+  { namn: 'Chisan', klass: 'TVBL', innehall: 'rysk rot, rosenrot och fjärilsranka', vaxt: null },
+  { namn: 'Ellura', klass: 'TVBL', innehall: 'amerikanskt tranbär', vaxt: null },
+  { namn: 'Lyngonia', klass: 'TVBL', innehall: 'mjölon (<i>Arctostaphylos uva-ursi</i>), blad', vaxt: null },
+  // vanliga läkemedel
+  { namn: 'Sativex', klass: 'LM', innehall: 'extrakt av hampa med THC och CBD', vaxt: 'cannabis' },
+  { namn: 'Epidyolex', klass: 'LM', innehall: 'ren cannabidiol (CBD)', vaxt: 'cannabis' },
+  { namn: 'Vi-Siblin', klass: 'LM', innehall: 'fröskal av loppfrö (<i>Plantago ovata</i>)', vaxt: 'plantago' },
+  { namn: 'Pursennid Ex-Lax', klass: 'LM', innehall: 'renat sennaextrakt (sennosid A och B)', vaxt: 'senna' },
+  { namn: 'Mollipect', klass: 'LM', innehall: 'bromhexin och efedrin', vaxt: 'ephedra' },
+  // naturläkemedel
+  { namn: 'Samarin', klass: 'NLM', innehall: 'naturliga salter', vaxt: null }
+];
+const PREP = Object.fromEntries(PREPARATLISTA.map(x => [x.namn, x]));
+
+/* Rules questions: right answer first, then three wrong ones (they are shuffled in the quiz). */
+const REGELFRAGOR = [
+  { q: 'Vad står förkortningen TVBL för?', svar: ['Traditionellt växtbaserat läkemedel', 'Testat växtbaserat läkemedel', 'Tillfälligt växtbaserat läkemedel', 'Tillåtet vårdläkemedel'] },
+  { q: 'Hur lång tidigare medicinsk användning krävs för att ett växtbaserat läkemedel ska kunna registreras som TVBL?', svar: ['Minst 30 år, varav minst 15 år inom EU', 'Minst 10 år inom EU', 'Minst 15 år, varav minst 5 år inom EU', 'Det finns inget krav på tidigare användning'] },
+  { q: 'Krävs visad effekt i kliniska studier för att registrera ett TVBL?', svar: ['Nej, men effektpåståendena ska vara rimliga (plausibla)', 'Ja, minst en klinisk studie av god kvalitet', 'Ja, full dokumentation som för konventionella läkemedel', 'Nej, och det krävs inte heller någon bedömning av säkerhet'] },
+  { q: 'Vad gäller för kvalitet och säkerhet hos ett TVBL?', svar: ['Full bedömning av kvalitet och säkerhet görs, precis som för VBL', 'Kvalitet och säkerhet bedöms inte', 'Bara kvaliteten bedöms, inte säkerheten', 'Bara säkerheten bedöms, inte kvaliteten'] },
+  { q: 'Vilken text ska ett TVBL ange om sin användning?', svar: ['”Används traditionellt vid …”', '”Kliniskt bevisad effekt vid …”', '”Godkänt för behandling av …”', '”Rekommenderas av Läkemedelsverket vid …”'] },
+  { q: 'Hur kan ett växtbaserat läkemedel godkännas som VBL genom så kallad väletablerad medicinsk användning?', svar: ['Användning i mer än 10 år inom EU, med effekt visad i minst en klinisk studie av god kvalitet och utan motsägande studier', 'Användning i mer än 30 år, varav 15 år inom EU, utan krav på kliniska studier', 'Det räcker att produkten är oskadlig vid normal användning', 'Det räcker att den har använts i folkmedicin i något land'] },
+  { q: 'Vilken av klasserna godkänns (och registreras alltså inte bara) av Läkemedelsverket?', svar: ['VBL', 'TVBL', 'Både VBL och TVBL registreras bara', 'Ingen av dem, båda räknas som livsmedel'] },
+  { q: 'Kan ett VBL vara receptbelagt?', svar: ['Ja. De flesta är receptfria, men de kan vara receptbelagda', 'Nej, VBL är alltid receptfria', 'Ja, alla VBL är receptbelagda', 'Nej, VBL får bara säljas som kosttillskott'] },
+  { q: 'Var får ett TVBL säljas?', svar: ['Fritt, även utanför apotek', 'Bara på apotek', 'Bara på recept', 'Bara i annan handel efter särskilt tillstånd'] },
+  { q: 'Vad innehåller de naturläkemedel (NLM) som finns i Sverige i dag?', svar: ['Probiotika eller naturliga salter, t.ex. Samarin', 'Växtextrakt, t.ex. vänderot', 'Homeopatiska spädningar', 'Syntetiska substanser i låg dos'] },
+  { q: 'Sedan vilket år omfattar naturläkemedel (NLM) inte längre växtbaserade produkter?', svar: ['2009', '1992', '2015', '2001'] },
+  { q: 'Hur bör legitimerad vårdpersonal förhålla sig till TVBL, enligt Läkemedelsverkets råd?', svar: ['Mer restriktivt: de kan informera om TVBL som en egenvårdsmöjlighet, men inte ge en förbehållslös rekommendation', 'De ska rekommendera TVBL som förstahandsval vid egenvård', 'De får inte nämna TVBL alls', 'Som för VBL, eftersom båda har visad effekt'] },
+  { q: 'Vilken svensk myndighet ansvarar för läkemedel, inklusive VBL och TVBL?', svar: ['Läkemedelsverket', 'Livsmedelsverket', 'Folkhälsomyndigheten', 'Kommunerna'] },
+  { q: 'Ginseng säljs ofta som kosttillskott. Vilka kontrollerar kosttillskott i Sverige?', svar: ['Livsmedelsverket och kommunerna, eftersom kosttillskott är livsmedel', 'Läkemedelsverket, eftersom ginseng är en läkemedelsväxt', 'Europeiska läkemedelsmyndigheten (EMA)', 'Ingen, kosttillskott kontrolleras inte'] }
 ];
 
 /* ============================ helpers ============================ */
@@ -476,9 +725,11 @@ function molSVG(sid) {
   // same ACS-like, all-black style as the biosynthesis trainer
   const svg = mol.get_svg_with_highlights(JSON.stringify({
     width: big ? 1000 : 600, height: big ? 750 : 450,
-    bondLineWidth: 3.15, scaleBondWidth: true, multipleBondOffset: 0.18, additionalAtomLabelPadding: 0.066,
+    // slightly bolder bonds than the trainer and RDKit's filled default font (not the thin stroke font),
+    // so the drawings stay crisp when shown small (quiz options, flashcards)
+    bondLineWidth: 4.5, scaleBondWidth: true, multipleBondOffset: 0.18, additionalAtomLabelPadding: 0.066,
     // baseFontSize sets how big atom letters (O, N …) are relative to the bonds; smaller than the trainer's 0.9 so they read better
-    fontFile: 'BuiltinTelexRegular', baseFontSize: 0.6, maxFontSize: 200, addChiralHs: false,
+    baseFontSize: 0.6, maxFontSize: 200, addChiralHs: false,
     atomColourPalette: { "-1": [0,0,0], "1": [0,0,0], "6": [0,0,0], "7": [0,0,0], "8": [0,0,0], "16": [0,0,0] }
   }));
   mol.delete();
@@ -505,16 +756,17 @@ document.addEventListener('click', e => {
   $('#modal-body').innerHTML = `${hide ? '' : `<div class="plant-title" style="margin:.2rem 0 .8rem">${s.namn}<span class="sv">ur <i>${byId(s.vaxt).latin}</i> (${byId(s.vaxt).sv})</span></div>`}${molDiv(s.id)}`;
   $('#modal').hidden = false;
 });
-const molGridHTML = p => structsOf(p).length ? `<div class="mol-grid">${structsOf(p).map(s => `<div>${molDiv(s.id)}<div class="mol-cap">${s.namn}</div></div>`).join('')}</div>` : '';
+const molGridHTML = p => structsOf(p).length ? `<div class="mol-grid">${structsOf(p).map(s => `<div>${molDiv(s.id)}<div class="mol-cap">${s.namn}${bioLine(s)}</div></div>`).join('')}</div>` : '';
 
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 /* Typed Latin names must be exact (genus capitalised, species in lower case, correct spelling).
    Only extra spaces before, after or between the words are forgiven. */
-function checkLatin(raw, p) {
+function checkLatin(raw, p, photo = false) {
   const typed = raw.trim().replace(/\s+/g, ' ');
-  const accepted = [p.latin, ...(p.latinAlt || [])];
-  if (accepted.includes(typed)) return { ok: true, typed };
+  // synonyms always count; other course species (latinArter) only when no specific photo is shown
+  const accepted = [p.latin, ...(p.latinAlt || []), ...(photo ? [] : (p.latinArter || []))];
+  if (accepted.includes(typed)) return { ok: true, typed, art: (p.latinArter || []).includes(typed) };
   let hint = '';
   const [g, s] = p.latin.split(' '), parts = typed.split(' ');
   if (!typed) hint = 'Du skrev inget.';
@@ -540,39 +792,118 @@ function wireTypeForm(onAnswer) {
     onAnswer(input);
   });
 }
+// a wrong typed name that is another course plant: say which plant that is (with its photo)
+function otherPlantInfo(typed, p) {
+  const t = typed.toLowerCase();
+  const o = VAXTER.find(v => v.id !== p.id && [v.latin, ...(v.latinAlt || []), ...(v.latinArter || [])].some(n => n.toLowerCase() === t));
+  if (!o) return '';
+  return `<div style="display:flex;gap:.7rem;align-items:center;margin-top:.5rem">${img(o) ? `<img src="${img(o).src}" alt="" style="width:4.5rem;height:4.5rem;object-fit:cover;border-radius:.5rem">` : ''}
+    <span><i>${o.latin}</i> är ${o.sv}, en annan växt i kursen.</span></div>`;
+}
 function typedFeedbackHTML(res, p) {
   return res.ok
-    ? `<div class="feedback ok">✅ Rätt! <i>${p.latin}</i>${res.typed !== p.latin ? ` (godkänd synonym till <i>${p.latin}</i>)` : ''}
+    ? `<div class="feedback ok">✅ Rätt! ${res.art ? `<i>${esc(res.typed)}</i> godkänns, eftersom kursen tar upp flera arter. Här används <i>${p.latin}</i>.` : res.typed !== p.latin ? `<i>${esc(res.typed)}</i> är en godkänd synonym till <i>${p.latin}</i>.` : `<i>${p.latin}</i>`}
          <div class="more">Läs mer: <button class="linkbtn" onclick="openPlant('${p.id}')">${p.latin} (${p.sv})</button></div></div>`
     : `<div class="feedback bad">❌ Inte riktigt. Rätt svar: <i>${p.latin}</i> (${p.sv})
-         <div class="more">Du skrev: <i>${esc(res.typed)}</i>${res.hint ? '<br>' + res.hint : ''}</div>
+         <div class="more">Du skrev: <i>${esc(res.typed)}</i>${res.hint ? '<br>' + res.hint : ''}${otherPlantInfo(res.typed, p)}</div>
          <div class="more">Läs mer: <button class="linkbtn" onclick="openPlant('${p.id}')">${p.latin}</button></div></div>`;
 }
 
-function photoHTML(p, withCredit = true) {
-  const b = img(p);
-  if (!b) return '';
-  const credit = withCredit ? `<div class="credit">Foto: ${b.foto}, <a href="${b.kalla}" target="_blank" rel="noopener">${b.licens}</a>, via Wikimedia Commons</div>` : '';
-  return `<img class="photo" src="${b.src}" alt="Foto av ${p.latin}" loading="lazy">${credit}`;
+// all photos of a plant: the main (embedded) one first, then the extra ones in the img/ folder
+const allPhotos = p => {
+  const main = img(p) && { ...img(p), text: (typeof HUVUDBILD_TEXT !== 'undefined' && HUVUDBILD_TEXT[p.id]) || '',
+    kannIgen: !HUVUDBILD_EJ_KANN_IGEN.includes(p.id) };
+  return [main, ...((typeof EXTRA_BILDER !== 'undefined' && EXTRA_BILDER[p.id]) || [])].filter(Boolean);
+};
+// main photos that are not used in "Känn igen" (a close-up you can't recognise the plant itself from)
+const HUVUDBILD_EJ_KANN_IGEN = [];
+const kannIgenPhotos = p => allPhotos(p).filter(b => b.kannIgen !== false);
+// caption (what the photo shows) + photographer and licence
+const creditHTML = b => `${b.text ? `<span class="ptext">${b.text}</span>` : ''}Foto: ${b.foto}, <a href="${b.kalla}" target="_blank" rel="noopener">${b.licens}</a>, via Wikimedia Commons`;
+// gallery = small thumbnails under the photo; tapping one shows it large
+function photoHTML(p, withCredit = true, gallery = false) {
+  const ph = allPhotos(p);
+  if (!ph.length) return '';
+  const thumbs = gallery && ph.length > 1
+    ? `<div class="gallery-thumbs">${ph.map((b, i) => `<button class="gthumb ${i ? '' : 'is-on'}" data-i="${i}" aria-label="Visa bild ${i + 1}"><img src="${b.src}" alt="" loading="lazy"></button>`).join('')}</div>` : '';
+  return `<div class="gallery" data-pid="${p.id}"><img class="photo" src="${ph[0].src}" alt="Foto av ${p.latin}" loading="lazy">
+    ${withCredit ? `<div class="credit">${creditHTML(ph[0])}</div>` : ''}${thumbs}</div>`;
+}
+document.addEventListener('click', e => {
+  const t = e.target.closest('.gthumb'); if (!t) return;
+  const g = t.closest('.gallery'), b = allPhotos(byId(g.dataset.pid))[+t.dataset.i];
+  g.querySelector('.photo').src = b.src;
+  const c = g.querySelector('.credit'); if (c) c.innerHTML = creditHTML(b);
+  g.querySelectorAll('.gthumb').forEach(x => x.classList.toggle('is-on', x === t));
+});
+
+// the fact sections, in reading order; factsHTML(p, keys) shows only some of them
+const FAKTA_RADER = [
+  ['slakte', 'Familj och släkte'], ['delText', 'Använd växtdel'], ['substansText', 'Aktiva substanser'],
+  ['strukturer', 'Strukturer <span style="text-transform:none;letter-spacing:0;font-weight:400;color:var(--muted)">(tryck för att förstora)</span>'],
+  ['mekanism', 'Verkningsmekanism'], ['anvandning', 'Användning'], ['sakerhet', 'Säkerhet och biverkningar'], ['extra', 'Bra att veta']
+];
+function factsHTML(p, keys = null) {
+  const val = k => k === 'strukturer' ? molGridHTML(p) : p[k];
+  return `<dl class="facts">${FAKTA_RADER.filter(([k]) => !keys || keys.includes(k))
+    .map(([k, t]) => val(k) ? `<div class="frow"><dt>${t}</dt><dd>${val(k)}</dd></div>` : '').join('')}</dl>`;
 }
 
-function factsHTML(p) {
-  const row = (t, v) => v ? `<dt>${t}</dt><dd>${v}</dd>` : '';
-  return `<dl class="facts">
-    ${row('Familj och släkte', p.slakte)}
-    ${row('Använd växtdel', p.delText)}
-    ${row('Aktiva substanser', p.substansText)}
-    ${row('Strukturer <span style="text-transform:none;letter-spacing:0;font-weight:400;color:var(--muted)">(tryck för att förstora)</span>', molGridHTML(p))}
-    ${row('Verkningsmekanism', p.mekanism)}
-    ${row('Användning', p.anvandning)}
-    ${row('Säkerhet och biverkningar', p.sakerhet)}
-    ${row('Bra att veta', p.extra)}
-  </dl>`;
+/* "Kort sammanfattning": a quick overview at the top of each plant (deliberately NOT called "must know",
+   so students don't skip the rest). Built from the short quiz fields. */
+function masteHTML(p) {
+  const r = (t, v) => v ? `<div class="mrow"><dt>${t}</dt><dd>${v}</dd></div>` : '';
+  return `<div class="maste"><div class="maste-h">📝 Kort sammanfattning</div><dl>
+    ${r('Namn', `<i>${p.latin}</i>, ${p.sv}`)}
+    ${r('Växtdel', p.del)}
+    ${r('Aktiva substanser', p.substanser.filter(s => !FOR_ALLMANNA.includes(s)).join(', ') || p.substanser.join(', '))}
+    ${r('Används vid', p.anvKort.join('; '))}
+    ${r('Se upp med', p.sakKort.join('; '))}
+  </dl></div>`;
 }
-
+// a plant's photo and facts. Phones: everything stacked. Desktop: photo beside all the text,
+// then the structures in a full-width row at the bottom. The must-know box comes first.
+const detailHTML = p => masteHTML(p) + (img(p)
+  ? `<div class="detail-top"><div class="detail-photo">${photoHTML(p, true, true)}</div><div>${factsHTML(p, ['slakte', 'delText', 'substansText', 'mekanism', 'anvandning', 'sakerhet', 'extra'])}</div></div>
+     <div class="detail-structs">${factsHTML(p, ['strukturer'])}</div>`
+  : factsHTML(p));
 function openPlant(id) {
   const p = byId(id);
-  $('#modal-body').innerHTML = `<div class="plant-title" style="margin:.2rem 0 .8rem"><span class="latin">${p.latin}</span><span class="sv">${p.sv} · ${p.familj}</span></div>${photoHTML(p)}${factsHTML(p)}`;
+  $('#modal-body').innerHTML = `<div class="plant-title" style="margin:.2rem 0 .8rem"><span class="latin">${p.latin}</span><span class="sv">${p.sv} · ${p.familj}</span></div>${detailHTML(p)}`;
+  $('#modal').hidden = false;
+  $('#modal .sheet').scrollTop = 0;
+}
+/* The "Regler" page: medicine classes, requirements and the products sorted by class (lecture slides 5–14). */
+function reglerHTML() {
+  const row = (t, v) => `<div class="frow"><dt>${t}</dt><dd>${v}</dd></div>`;
+  const lista = k => `<ul>${PREPARATLISTA.filter(x => x.klass === k).map(x => `<li><b>${x.namn}</b>: ${x.innehall}</li>`).join('')}</ul>`;
+  return `<dl class="facts regler">
+    ${row('Läkemedelsklasser', `Enligt läkemedelslagen (2015:315) finns bl.a.:<ul>
+      <li><b>Läkemedel (LM)</b>, både naturprodukter och syntetiska produkter.</li>
+      <li><b>Växtbaserade läkemedel</b>: <b>VBL</b> ([väletablerade] växtbaserade läkemedel) och <b>TVBL</b> (traditionella växtbaserade läkemedel).</li>
+      <li><b>Naturläkemedel (NLM)</b>.</li>
+      <li>Vissa utvärtes läkemedel (VUM), en äldre klassificering, och homeopatiska läkemedel.</li></ul>`)}
+    ${row('VBL: godkänns', `Full bedömning av kvalitet och säkerhet, och effekten ska vara visad i kliniska studier, antingen
+      <ul><li>med full dokumentation, precis som för konventionella läkemedel, eller</li>
+      <li>genom <b>väletablerad medicinsk användning</b>: mer än 10 år inom EU, med effekt visad i minst en klinisk studie av god kvalitet och utan motsägande studier.</li></ul>
+      De flesta VBL är receptfria, men de kan vara receptbelagda. De får säljas i annan handel än apotek efter särskilt tillstånd.`)}
+    ${row('TVBL: registreras', `Full bedömning av kvalitet och säkerhet, men <b>inget krav på visad effekt</b> i kliniska studier:
+      <ul><li>Dokumentationen ska visa att produkten är oskadlig vid användning enligt instruktionen, och effektpåståendena ska vara rimliga (plausibla).</li>
+      <li>Tidigare medicinsk användning i <b>mer än 30 år, varav mer än 15 år inom EU</b>.</li>
+      <li>Bara för egenvård, och texten ska ange ”Används traditionellt vid …”.</li>
+      <li>Får säljas fritt.</li></ul>
+      TVBL-vägen är enklare och billigare, så det finns TVBL som har god effektdokumentation även om den inte användes i ansökan.`)}
+    ${row('Naturläkemedel (NLM)', 'Sedan 2009 omfattar naturläkemedel inte längre växtbaserade läkemedel. De naturläkemedel som finns i Sverige i dag är probiotika eller naturliga salter (t.ex. Samarin).')}
+    ${row('Råd till vårdpersonal', 'Legitimerad hälso- och sjukvårdspersonal bör ha en <b>mer restriktiv hållning</b> till TVBL, eftersom det vetenskapliga underlaget för effekten är mycket begränsat. De kan informera om TVBL som en egenvårdsmöjlighet, men en förbehållslös rekommendation kan strida mot vetenskap och beprövad erfarenhet. TVBL är ändå bedömda som läkemedel av god farmaceutisk kvalitet och oskadliga vid normal användning.')}
+    ${row('Kontrollmyndigheter', '<b>Läkemedel</b>: Europeiska läkemedelsmyndigheten (EMA) och Läkemedelsverket.<br><b>Livsmedel</b>, inklusive kosttillskott: Europeiska kommissionen, Livsmedelsverket och Sveriges kommuner.')}
+    ${row('Preparat: VBL', lista('VBL'))}
+    ${row('Preparat: TVBL', lista('TVBL'))}
+    ${row('Preparat: vanliga läkemedel', lista('LM'))}
+    ${row('Preparat: naturläkemedel', lista('NLM'))}
+  </dl>`;
+}
+function openRegler() {
+  $('#modal-body').innerHTML = `<div class="plant-title" style="margin:.2rem 0 .8rem">📜 Regler och preparatklasser<span class="sv">VBL, TVBL och naturläkemedel</span></div>${reglerHTML()}`;
   $('#modal').hidden = false;
   $('#modal .sheet').scrollTop = 0;
 }
@@ -585,6 +916,7 @@ const VIEWS = { hem: viewHome, fakta: viewFakta, kort: viewKort, quiz: viewQuiz,
 function go(v) {
   if (!VIEWS[v]) v = 'hem';
   document.body.dataset.view = v;            // lets the phone layout hide the Start button on the start page
+  app.dataset.view = v;                      // lets the desktop layout pick a width per view
   document.querySelectorAll('.tab').forEach(t => t.classList.toggle('is-on', t.dataset.view === v));
   const on = document.querySelector(`.tab[data-view="${v}"]`);
   if (on) on.scrollIntoView({ block: 'nearest', inline: 'nearest' });
@@ -598,11 +930,15 @@ $('#tabs').addEventListener('click', e => { const t = e.target.closest('.tab'); 
 /* ============================ start ============================ */
 function viewHome() {
   const known = store.get('known', []).length;
-  app.innerHTML = `
+  app.innerHTML = `<div class="home-grid">
     <div class="card">
       <h2>Välkommen!</h2>
       <p>Här övar du på kursens ${VAXTER.length} läkemedelsväxter: vilka substanser de innehåller, vilken växtdel som används, vad de används till och vad man ska se upp med.</p>
       <p class="muted small">Tips: läs först under <b>Fakta</b>, öva sedan med faktakort, quiz och parning. Ditt resultat sparas bara i din egen webbläsare.</p>
+      ${weakest().length ? `<div class="svaga"><b>🎯 Dina svagaste växter just nu:</b>
+        ${weakest().map(id => `<button class="linkbtn" onclick="openPlant('${id}')"><i>${byId(id).latin}</i></button>`).join(', ')}
+        <div class="btn-row" style="margin-top:.6rem"><button class="btn btn-main" onclick="startFokus(weakest())">Öva på dem</button>
+        <button class="btn" onclick="if(confirm('Nollställa dina resultat?')){store.set('stats',{});viewHome()}">↺ Nollställ</button></div></div>` : ''}
     </div>
     <div class="tiles">
       <button class="tile" onclick="go('fakta')"><span class="ico">📖</span><span><b>Fakta</b><span class="d">Läs om alla växter, med bilder och kemiska strukturer.</span></span></button>
@@ -610,24 +946,62 @@ function viewHome() {
       <button class="tile" onclick="go('quiz')"><span class="ico">❓</span><span><b>Quiz</b><span class="d">10 frågor åt gången: flerval, strukturer och skriv latinska namn. Välj tema.</span></span></button>
       <button class="tile" onclick="go('para')"><span class="ico">🔗</span><span><b>Para ihop</b><span class="d">Para ihop växter med substanser, användning, familj eller preparat.</span></span></button>
       <button class="tile" onclick="go('bild')"><span class="ico">📷</span><span><b>Känn igen växten</b><span class="d">Vilken växt syns på bilden? Skriv det latinska namnet, exakt rätt stavat.</span></span></button>
-    </div>`;
+    </div></div>`;
 }
 
 /* ============================ fakta ============================ */
+const DESKTOP = matchMedia('(min-width: 1024px)');
+// Fakta is built differently on desktop and phone, so rebuild it if the window crosses the breakpoint
+DESKTOP.addEventListener('change', () => { if (document.body.dataset.view === 'fakta') viewFakta(); });
+let faktaSel = null;
+const REGLER_SOKTEXT = ('regler vbl tvbl nlm naturläkemedel växtbaserat läkemedel traditionellt läkemedelsverket ' + PREPARATLISTA.map(x => x.namn).join(' ')).toLowerCase();
+const thumbHTML = p => img(p) ? `<img class="thumb" src="${img(p).src}" alt="" loading="lazy">` : '<span class="thumb" style="display:flex;align-items:center;justify-content:center">🌿</span>';
+const searchText = p => (p.latin + ' ' + p.sv + ' ' + p.familj + ' ' + p.substansText + ' ' + p.anvandning + ' ' + p.preparat.join(' ') + ' ' + structsOf(p).map(s => s.namn).join(' ')).replace(/<[^>]+>/g, '').replace(/"/g, '').toLowerCase();
 function viewFakta() {
   const list = VAXTER.slice().sort((a, b) => a.latin.localeCompare(b.latin));
-  const credits = list.filter(img).map(p => { const b = img(p); return `<li><i>${p.latin}</i>: ${b.foto}, <a href="${b.kalla}" target="_blank" rel="noopener">${b.licens}</a></li>`; }).join('');
-  app.innerHTML = `
-    <input class="search" id="fsok" type="search" placeholder="Sök växt, substans eller preparat …" aria-label="Sök">
-    <div id="flist">${list.map(p => `
-      <details class="plant" data-text="${(p.latin + ' ' + p.sv + ' ' + p.familj + ' ' + p.substansText + ' ' + p.anvandning + ' ' + p.preparat.join(' ') + ' ' + structsOf(p).map(s => s.namn).join(' ')).replace(/<[^>]+>/g, '').replace(/"/g, '').toLowerCase()}">
-        <summary>${img(p) ? `<img class="thumb" src="${img(p).src}" alt="" loading="lazy">` : '<span class="thumb" style="display:flex;align-items:center;justify-content:center">🌿</span>'}
+  // each photo carries its own credit line (photoHTML), so there is no separate source list here
+  const search = `<input class="search" id="fsok" type="search" placeholder="Sök växt, substans eller preparat …" aria-label="Sök">`;
+
+  if (DESKTOP.matches) {
+    // desktop: plant list on the left, the chosen plant on the right
+    if (faktaSel !== 'regler' && !byId(faktaSel)) faktaSel = list[0].id;
+    app.innerHTML = `<div class="fakta-split">
+      <div class="card fakta-side">${search}
+        <div id="flist"><button class="fakta-item" data-id="regler" data-text="${REGLER_SOKTEXT}"><span class="thumb">📜</span><span class="nm"><b>Regler</b><small>VBL, TVBL och NLM</small></span></button>${list.map(p => `<button class="fakta-item" data-id="${p.id}" data-text="${searchText(p)}">${thumbHTML(p)}<span class="nm"><i>${p.latin}</i><small>${p.sv}</small></span></button>`).join('')}</div>
+        <p id="fnone" class="muted small" hidden>Ingen växt matchar sökningen.</p></div>
+      <div class="card fakta-detail" id="fdetail"></div></div>`;
+    const show = id => {
+      faktaSel = id; const p = byId(id);
+      document.querySelectorAll('.fakta-item').forEach(b => b.classList.toggle('is-on', b.dataset.id === id));
+      $('#fdetail').innerHTML = id === 'regler'
+        ? `<div class="plant-title" style="font-size:1.6rem;margin-bottom:1rem">📜 Regler och preparatklasser<span class="sv">VBL, TVBL och naturläkemedel</span></div>${reglerHTML()}`
+        : `<div class="plant-title" style="font-size:1.6rem;margin-bottom:1rem"><span class="latin">${p.latin}</span><span class="sv">${p.sv} · ${p.familj}</span></div>${detailHTML(p)}`;
+    };
+    $('#flist').addEventListener('click', e => { const b = e.target.closest('.fakta-item'); if (b) { show(b.dataset.id); window.scrollTo({ top: 0, behavior: 'smooth' }); } });
+    show(faktaSel);
+    $('#fsok').addEventListener('input', e => {
+      const q = e.target.value.trim().toLowerCase(); let n = 0, first = null;
+      document.querySelectorAll('.fakta-item').forEach(b => { const ok = !q || b.dataset.text.includes(q); b.hidden = !ok; if (ok) { n++; first = first || b.dataset.id; } });
+      $('#fnone').hidden = n > 0;
+      if (first && document.querySelector(`.fakta-item[data-id="${faktaSel}"]`).hidden) show(first);   // keep showing a plant that matches
+    });
+    return;
+  }
+
+  // phone: one list, tap a plant to open it in place
+  app.innerHTML = `${search}
+    <div id="flist">
+      <details class="plant" data-text="${REGLER_SOKTEXT}">
+        <summary><span class="thumb" style="display:flex;align-items:center;justify-content:center;font-size:1.6rem">📜</span>
+          <span class="plant-title" style="font-size:1.08rem">Regler<span class="sv">VBL, TVBL och naturläkemedel</span></span></summary>
+        <div class="body">${reglerHTML()}</div>
+      </details>${list.map(p => `
+      <details class="plant" data-text="${searchText(p)}">
+        <summary>${thumbHTML(p)}
           <span class="plant-title" style="font-size:1.08rem"><span class="latin">${p.latin}</span><span class="sv">${p.sv} · ${p.familj}</span></span></summary>
-        <div class="body">${photoHTML(p)}${factsHTML(p)}</div>
+        <div class="body">${masteHTML(p)}${photoHTML(p, true, true)}${factsHTML(p)}</div>
       </details>`).join('')}</div>
-    <p id="fnone" class="muted" hidden>Ingen växt matchar sökningen.</p>
-    <div class="card small muted" style="margin-top:1rem"><b>Bildkällor</b> (Wikimedia Commons)<ul style="padding-left:1.2rem">${credits}</ul>
-      <p><b>Kemiska strukturer:</b> data från PubChem, ritade med RDKit.</p></div>`;
+    <p id="fnone" class="muted" hidden>Ingen växt matchar sökningen.</p>`;
   $('#fsok').addEventListener('input', e => {
     const q = e.target.value.trim().toLowerCase(); let n = 0;
     document.querySelectorAll('#flist details').forEach(d => { const show = !q || d.dataset.text.includes(q); d.hidden = !show; if (show) n++; });
@@ -683,6 +1057,7 @@ function renderKort() {
           <div class="btn-row" style="margin-top:auto"><button class="btn btn-main" onclick="kort.flipped=true;renderKort()">🔄 Vänd kortet</button></div></div>`
       : `<div class="card flash">${head}${molDiv(s.id, 'mol-big')}
           <div class="plant-title" style="text-align:center">${s.namn}<span class="sv">ur <i>${p.latin}</i> (${p.sv})</span></div>
+          ${BIOSYNTES[s.id] ? `<p class="small" style="text-align:center;color:var(--soft)">${BIOSYNTES[s.id].klass} · ${vagText(s)}<br>${BIOSYNTES[s.id].not}</p>` : ''}
           <p style="text-align:center"><button class="linkbtn" onclick="openPlant('${p.id}')">Visa fakta om ${p.latin}</button></p>
           <div class="btn-row"><button class="btn" onclick="markKort(false)">🔁 Öva mer</button><button class="btn btn-main" onclick="markKort(true)">😊 Jag kunde det</button></div></div>`;
     window.scrollTo(0, 0);
@@ -695,9 +1070,9 @@ function renderKort() {
       <p class="muted" style="margin-top:1rem">Vad vet du om växten? Tänk efter innan du vänder.</p></div>
       <div class="btn-row" style="margin-top:auto"><button class="btn btn-main" onclick="kort.flipped=true;renderKort()">🔄 Vänd kortet</button></div></div>`;
   } else {
-    app.innerHTML = `<div class="card flash">${head}
-      <div class="plant-title"><span class="latin">${p.latin}</span><span class="sv">${p.sv} · ${p.familj}</span></div>
-      ${factsHTML(p)}
+    app.innerHTML = `<div class="card flash wide">${head}
+      <div class="plant-title" style="margin-bottom:.8rem"><span class="latin">${p.latin}</span><span class="sv">${p.sv} · ${p.familj}</span></div>
+      ${detailHTML(p)}
       <div class="btn-row"><button class="btn" onclick="markKort(false)">🔁 Öva mer</button><button class="btn btn-main" onclick="markKort(true)">😊 Jag kunde det</button></div></div>`;
   }
   window.scrollTo(0, 0);
@@ -712,8 +1087,15 @@ function markKort(ok) {
 
 /* ============================ quiz ============================ */
 const TEMAN = {
-  blandat: { namn: 'Blandat', typer: ['substans', 'substansIVaxt', 'anv', 'preparat', 'familj', 'del', 'sak', 'sakIVaxt', 'skrivSv', 'skrivSubstans', 'skrivPreparat', 'strukturNamn', 'strukturVaxt', 'strukturVal', 'skrivStruktur'] },
+  // Blandat leans on what the "Kort sammanfattning" box covers (names, plant part, substances, use, safety):
+  // those question types are listed 3 times, so about 7 in 10 questions come from them. Everything else still appears.
+  blandat: { namn: 'Blandat', typer: [
+    ...Array(3).fill(['substans', 'substansIVaxt', 'anv', 'del', 'sak', 'sakIVaxt', 'skrivSv', 'skrivSubstans']).flat(),
+    'preparat', 'familj', 'skrivPreparat', 'strukturNamn', 'strukturVaxt', 'strukturVal', 'skrivStruktur', 'klassPreparat', 'regel', 'kontrast'] },   // biosynthesis questions only in their own theme
   strukturer: { namn: 'Strukturer', typer: ['strukturNamn', 'strukturVaxt', 'strukturVal', 'skrivStruktur'] },
+  regler: { namn: 'Regler: VBL och TVBL', typer: ['klassPreparat', 'klassVal', 'regel'] },
+  kontrast: { namn: 'Jämför och skilj', typer: ['kontrast'] },
+  biosyntes: { namn: 'Ämnesklass och biosyntes', typer: ['bioKlass', 'bioVag'] },
   latin: { namn: 'Skriv latinska namn', typer: ['skrivSv', 'skrivSubstans', 'skrivPreparat', 'skrivStruktur'] },
   substanser: { namn: 'Substanser', typer: ['substans', 'substansIVaxt'] },
   anvandning: { namn: 'Användning och preparat', typer: ['anv', 'preparat'] },
@@ -799,23 +1181,65 @@ const QTYPES = {
   skrivStruktur(p) {
     const s = structQ(p); if (!s) return null;
     return { skriv: true, fig: s.id, q: 'Skriv det latinska namnet på växten som substansen kommer från.', info: structInfo(s) };
+  },
+  /* rules (VBL/TVBL): these don't depend on the plant that was drawn */
+  klassPreparat() {
+    const x = pick(PREPARATLISTA);
+    return { plant: x.vaxt, q: `Vilken läkemedelsklass tillhör <b>${x.namn}</b>?`, right: x.klass,
+      info: `${x.namn} innehåller ${x.innehall} och är ${KLASS_NAMN[x.klass]}.`,
+      opts: Object.keys(KLASS_NAMN).map(k => ({ key: k, html: KLASS_NAMN[k].replace(/^./, c => c.toUpperCase()) })) };
+  },
+  klassVal() {
+    const k = pick(['VBL', 'TVBL', 'LM']);
+    const x = pick(PREPARATLISTA.filter(y => y.klass === k));
+    const others = shuffle(PREPARATLISTA.filter(y => y.klass !== k)).slice(0, 3);
+    return { plant: x.vaxt, q: `Vilket av preparaten är ${KLASS_NAMN[k]}?`, right: x.namn,
+      info: `${x.namn} (${x.innehall}) är ${KLASS_NAMN[k]}.`,
+      opts: [x, ...others].map(y => ({ key: y.namn, html: y.namn })) };
+  },
+  regel() {
+    const r = pick(REGELFRAGOR);
+    return { plant: null, regler: true, q: r.q, right: r.svar[0], info: r.svar[0], opts: r.svar.map(s => ({ key: s, html: s })) };
+  },
+  /* things that are easy to mix up */
+  kontrast() {
+    const k = pick(KONTRASTER);
+    return { plant: k.vaxt, q: k.q, right: k.svar[0], info: k.svar[0], opts: k.svar.map(s => ({ key: s, html: s })) };
+  },
+  /* compound class and biosynthesis (shown with the structure) */
+  bioKlass(p) {
+    const s = structQ(p); if (!s || !BIOSYNTES[s.id]) return null;
+    const right = BIOSYNTES[s.id].klass;
+    const others = shuffle([...new Set(Object.values(BIOSYNTES).map(b => b.klass))].filter(k => k !== right)).slice(0, 3);
+    return { fig: s.id, q: 'Vilken ämnesklass tillhör substansen?', right, info: bioInfoNamn(s), opts: [right, ...others].map(x => ({ key: x, html: x })) };
+  },
+  bioVag(p) {
+    const s = structQ(p); if (!s || !BIOSYNTES[s.id]) return null;
+    const right = vagText(s);
+    const others = shuffle([...new Set(STRUKTURER.map(vagText))].filter(v => v && v !== right)).slice(0, 3);
+    return { fig: s.id, q: 'Vilken eller vilka biosyntesvägar bygger upp substansen?', right, info: bioInfoNamn(s), opts: [right, ...others].map(x => ({ key: x, html: x })) };
   }
 };
 const structOK = () => !rdkFailed;
 const structQ = p => structOK() ? pick(structsOf(p)) || null : null;
-const structInfo = s => `Strukturen är <b>${s.namn}</b> ur <i>${byId(s.vaxt).latin}</i>.`;
+const vagLower = s => vagText(s).toLowerCase().replace(/mva-\/mep-vägen/, 'MVA-/MEP-vägen').replace(/ \+ /g, ' och ');
+const bioInfo = s => BIOSYNTES[s.id] ? ` Den är en ${BIOSYNTES[s.id].klass} och byggs via ${vagLower(s)}. ${BIOSYNTES[s.id].not}` : '';
+const bioInfoNamn = s => `<b>${s.namn}</b> (ur <i>${byId(s.vaxt).latin}</i>) är en ${BIOSYNTES[s.id].klass} och byggs via ${vagLower(s)}. ${BIOSYNTES[s.id].not}`;
+const structInfo = s => `Strukturen är <b>${s.namn}</b> ur <i>${byId(s.vaxt).latin}</i>.${bioInfo(s)}`;
 /* too general to point to one plant when there are no options to choose from */
 const FOR_ALLMANNA = ['flavonoider och triterpenoider', 'fibrer i fröskalet'];
 let quiz = { tema: 'blandat', qs: [], i: 0, score: 0, missed: [], answered: false };
-function makeQuestions(tema, n) {
-  const typer = TEMAN[tema].typer, out = [], seen = new Set();
-  for (let tries = 0; out.length < n && tries < 500; tries++) {
-    const p = pick(VAXTER), t = pick(typer), q = QTYPES[t](p);
+// pool = the plants to ask about (all of them, or only the ones the student keeps missing)
+function makeQuestions(tema, n, pool = VAXTER, typer = TEMAN[tema].typer) {
+  const out = [], seen = new Set();
+  for (let tries = 0; out.length < n && tries < 600; tries++) {
+    const p = pick(pool), t = pick(typer), q = QTYPES[t](p);
     if (q && q.fig) q.q2 = q.fig + '|' + q.q;            // same text with a different structure is a different question
     if (!q || seen.has(q.q2 || q.q + q.right)) continue;
     seen.add(q.q2 || q.q + q.right);
     if (!q.skriv && q.opts.length < 4) continue;
-    seen.add(q.q); q.plant = p.id; if (!q.skriv) q.opts = shuffle(q.opts); out.push(q);
+    seen.add(q.q); if (q.plant === undefined) q.plant = p.id; q.typ = t; if (!q.skriv) q.opts = shuffle(q.opts); out.push(q);
+    // (rules questions set q.plant themselves: the product's plant, or null)
   }
   return out;
 }
@@ -825,7 +1249,30 @@ function viewQuiz() {
     <div class="chips">${Object.entries(TEMAN).map(([k, t]) => `<button class="chip ${quiz.tema === k ? 'is-on' : ''}" onclick="quiz.tema='${k}';viewQuiz()">${t.namn}</button>`).join('')}</div>
     <div class="btn-row"><button class="btn btn-main" onclick="startQuiz()">▶ Starta quiz</button></div></div>`;
 }
+/* ---------- the student's own results (saved only in their browser) ---------- */
+function logResult(pid, ok) {
+  if (!pid || !byId(pid)) return;
+  const st = store.get('stats', {}), s = st[pid] || [0, 0];
+  s[ok ? 0 : 1]++; st[pid] = s; store.set('stats', st);
+}
+// plants answered wrong most often (share of wrong answers, then number of wrong answers)
+function weakest(n = 4) {
+  const st = store.get('stats', {});
+  return Object.entries(st).filter(([id, [r, w]]) => w > 0 && byId(id))
+    .sort((a, b) => (b[1][1] / (b[1][0] + b[1][1])) - (a[1][1] / (a[1][0] + a[1][1])) || b[1][1] - a[1][1])
+    .slice(0, n).map(([id]) => id);
+}
+// a quiz about only some plants (the ones just missed, or the weakest), using plant questions from "Blandat"
+function startFokus(ids) {
+  const pool = ids.map(byId).filter(Boolean);
+  if (!pool.length) return;
+  const typer = TEMAN.blandat.typer.filter(t => !['klassPreparat', 'regel', 'kontrast'].includes(t));   // only questions about the chosen plants
+  go('quiz');
+  quiz.qs = makeQuestions('blandat', 10, pool, typer); quiz.i = 0; quiz.score = 0; quiz.missed = []; quiz.answered = false; quiz.fokus = ids;
+  renderQ();
+}
 function startQuiz() {
+  quiz.fokus = null;
   quiz.qs = makeQuestions(quiz.tema, 10); quiz.i = 0; quiz.score = 0; quiz.missed = []; quiz.answered = false;
   if (!quiz.qs.length) {
     app.innerHTML = `<div class="card"><h2>Inga frågor</h2><p>De kemiska strukturerna kunde inte laddas. Kontrollera internetanslutningen och ladda om sidan, eller välj ett annat tema.</p><div class="btn-row"><button class="btn" onclick="viewQuiz()">Byt tema</button></div></div>`;
@@ -836,13 +1283,17 @@ function startQuiz() {
 function renderQ() {
   if (quiz.i >= quiz.qs.length) return quizDone();
   const q = quiz.qs[quiz.i];
-  app.innerHTML = `<div class="card">
+  const answerPart = `<div class="q-text">${q.q}</div>
+    ${q.skriv ? typeFormHTML() : `<div class="opts ${q.molOpts ? 'opts-mol' : ''}">${q.opts.map((o, k) => `<button class="opt ${q.molOpts ? 'opt-mol' : ''}" data-k="${k}" ${q.molOpts ? `aria-label="Struktur ${k + 1}"` : ''}>${o.html}</button>`).join('')}</div>`}
+    <div id="qfb"></div>`;
+  // with a structure: structure on the left and the question on the right (desktop); stacked on phones
+  // four structures to choose from: on desktop they fill the left side, question and feedback on the right
+  app.innerHTML = `<div class="card ${q.fig || q.molOpts ? 'wide' : ''}">
     <p class="small muted">Fråga ${quiz.i + 1} av ${quiz.qs.length} · ${quiz.score} rätt</p>
     <div class="progress"><div style="width:${quiz.i / quiz.qs.length * 100}%"></div></div>
-    ${q.fig ? `<div class="q-fig">${molDiv(q.fig, 'mol-big')}</div>` : ''}
-    <div class="q-text">${q.q}</div>
-    ${q.skriv ? typeFormHTML() : `<div class="opts ${q.molOpts ? 'opts-mol' : ''}">${q.opts.map((o, k) => `<button class="opt ${q.molOpts ? 'opt-mol' : ''}" data-k="${k}" ${q.molOpts ? `aria-label="Struktur ${k + 1}"` : ''}>${o.html}</button>`).join('')}</div>`}
-    <div id="qfb"></div></div>`;
+    ${q.fig ? `<div class="qa-split"><div class="q-fig">${molDiv(q.fig, 'mol-big')}</div><div>${answerPart}</div></div>`
+      : q.molOpts ? `<div class="mol-q">${answerPart}</div>` : answerPart}
+    </div>`;
   if (q.skriv) wireTypeForm(answerTyped);
   else app.querySelectorAll('.opt').forEach(b => b.addEventListener('click', () => answerQ(+b.dataset.k)));
 }
@@ -850,6 +1301,7 @@ function answerTyped(input) {
   if (quiz.answered) return;
   quiz.answered = true;
   const q = quiz.qs[quiz.i], p = byId(q.plant), res = checkLatin(input.value, p);
+  logResult(p.id, res.ok);
   if (res.ok) quiz.score++; else if (!quiz.missed.includes(p.id)) quiz.missed.push(p.id);
   input.classList.add(res.ok ? 'ok' : 'bad');
   $('#qfb').innerHTML = typedFeedbackHTML(res, p) + (q.info ? `<p class="small" style="margin-top:.6rem">${q.info}</p>` : '') + nextBtnHTML();
@@ -861,25 +1313,69 @@ function wireNext() {
   $('#qnext').focus({ preventScroll: true });
   $('#qnext').scrollIntoView({ block: 'nearest', behavior: 'smooth' });
 }
+/* After a wrong multiple-choice answer: explain what the option the student picked actually is. */
+const plantLink = o => `<button class="linkbtn" onclick="openPlant('${o.id}')"><i>${o.latin}</i></button> (${o.sv})`;
+const listOr = (a, none) => a.length ? a.join(', ') : none;
+function choiceInfo(q, key) {
+  if (q.typ === 'klassVal' && PREP[key]) return `Du valde <b>${key}</b>, som är ${KLASS_NAMN[PREP[key].klass]}.`;
+  if (q.typ === 'klassPreparat' || q.typ === 'regel' || q.typ === 'klassVal') return '';
+  const o = byId(key);                       // the option was a plant
+  if (o) {
+    const what = {
+      substans: `innehåller ${listOr(o.substanser, '–')}`,
+      anv: `används vid: ${listOr(o.anvKort, '–')}`,
+      preparat: o.preparat.length ? `finns i preparaten ${o.preparat.join(', ')}` : 'inte har något preparat i kursen',
+      sak: o.sakKort.length ? `förknippas med: ${o.sakKort.join('; ')}` : 'inte har några särskilda säkerhetspunkter i kursen',
+      strukturVaxt: structsOf(o).length ? `innehåller t.ex. ${structsOf(o).map(s => s.namn).join(', ')}` : 'inte har några strukturer i kursen'
+    }[q.typ];
+    return `Du valde ${plantLink(o)}${what ? `, som ${what}` : ''}.`;
+  }
+  const s = STRUKT[key];                     // the option was a structure (by name or by picture)
+  if (s) {
+    const src = byId(s.vaxt);
+    return `Du valde <b>${s.namn}</b>, som finns i ${plantLink(src)}.` +
+      (q.typ === 'strukturNamn' ? `<div style="max-width:280px;margin-top:.5rem">${molDiv(s.id)}</div><span class="small">Så här ser ${s.namn} ut. Jämför med strukturen i frågan.</span>` : '');
+  }
+  // the option was a substance, family, plant part or safety point: say which plant(s) it belongs to
+  const owners = VAXTER.filter(v => ({ substansIVaxt: v.substanser, familj: [v.familj], del: [v.del], sakIVaxt: v.sakKort }[q.typ] || []).includes(key));
+  if (!owners.length) return '';
+  const lbl = { substansIVaxt: 'finns i', familj: 'är familjen för', del: 'är den växtdel som används av', sakIVaxt: 'gäller' }[q.typ];
+  return `Du valde <b>${key}</b>, som ${lbl} ${owners.map(plantLink).join(', ')}.`;
+}
 function answerQ(k) {
   if (quiz.answered) return;
   quiz.answered = true;
   const q = quiz.qs[quiz.i], chosen = q.opts[k], ok = chosen.key === q.right;
-  if (ok) quiz.score++; else if (!quiz.missed.includes(q.plant)) quiz.missed.push(q.plant);
-  app.querySelectorAll('.opt').forEach((b, j) => { b.disabled = true; if (q.opts[j].key === q.right) b.classList.add('ok'); else if (j === k) b.classList.add('bad'); });
-  const p = byId(q.plant);
+  const missKey = q.typ === 'regel' || !q.plant ? 'regler' : q.plant;    // rules questions point back to the Regler page
+  if (ok) quiz.score++; else if (!quiz.missed.includes(missKey)) quiz.missed.push(missKey);
+  if (!['regel', 'klassPreparat', 'klassVal'].includes(q.typ)) logResult(q.plant, ok);   // product-class questions say nothing about the plant
+  app.querySelectorAll('.opt').forEach((b, j) => {
+    b.disabled = true;
+    if (q.opts[j].key === q.right) b.classList.add('ok'); else if (j === k) b.classList.add('bad');
+    // structure options: after answering, every structure gets its name underneath
+    if (q.molOpts) b.insertAdjacentHTML('beforeend', `<div class="mol-cap">${STRUKT[q.opts[j].key].namn}</div>`);
+  });
+  const p = q.plant ? byId(q.plant) : null;
+  const du = ok ? '' : choiceInfo(q, chosen.key);
   $('#qfb').innerHTML = `<div class="feedback ${ok ? 'ok' : 'bad'}">${ok ? '✅ Rätt!' : '❌ Inte riktigt.'}
-    ${q.info ? `<div class="more">${q.info}</div>` : ''}
-    <div class="more">Läs mer: <button class="linkbtn" onclick="openPlant('${p.id}')">${p.latin} (${p.sv})</button></div></div>` + nextBtnHTML();
+    ${du ? `<div class="more">${du}</div>` : ''}
+    ${q.info ? `<div class="more">${ok ? '' : 'Rätt svar: '}${q.info}</div>` : ''}
+    <div class="more">Läs mer: ${q.typ === 'regel' || q.typ === 'klassPreparat' || q.typ === 'klassVal' ? `<button class="linkbtn" onclick="openRegler()">Regler och preparatklasser</button>${p ? ' · ' : ''}` : ''}${p ? `<button class="linkbtn" onclick="openPlant('${p.id}')">${p.latin} (${p.sv})</button>` : ''}</div></div>` + nextBtnHTML();
   wireNext();
 }
 function quizDone() {
   const n = quiz.qs.length, s = quiz.score;
   const msg = s === n ? 'Fullt pott! 🌟' : s >= n * .7 ? 'Bra jobbat!' : 'Fortsätt öva, det kommer!';
   app.innerHTML = `<div class="card" style="text-align:center"><h2>${msg}</h2><p class="score">${s} / ${n}</p>
-    ${quiz.missed.length ? `<p>Repetera gärna:</p><p>${quiz.missed.map(id => `<button class="linkbtn" style="margin:.2rem .5rem" onclick="openPlant('${id}')">${byId(id).latin}</button>`).join('')}</p>` : ''}
-    <div class="btn-row"><button class="btn btn-main" onclick="startQuiz()">🔁 Ny omgång (${TEMAN[quiz.tema].namn})</button><button class="btn" onclick="viewQuiz()">Byt tema</button></div></div>`;
+    ${quiz.missed.length ? `<p>Repetera gärna:</p><p>${quiz.missed.map(id => id === 'regler'
+      ? `<button class="linkbtn" style="margin:.2rem .5rem" onclick="openRegler()">Regler: VBL och TVBL</button>`
+      : `<button class="linkbtn" style="margin:.2rem .5rem" onclick="openPlant('${id}')">${byId(id).latin}</button>`).join('')}</p>` : ''}
+    <div class="btn-row">
+      ${missedPlants().length ? `<button class="btn btn-main" onclick="startFokus(missedPlants())">🎯 Öva på dina missar</button>` : ''}
+      <button class="btn ${missedPlants().length ? '' : 'btn-main'}" onclick="${quiz.fokus ? `startFokus(${JSON.stringify(quiz.fokus).replace(/"/g, "'")})` : 'startQuiz()'}">🔁 Ny omgång${quiz.fokus ? '' : ` (${TEMAN[quiz.tema].namn})`}</button>
+      <button class="btn" onclick="viewQuiz()">Byt tema</button></div></div>`;
 }
+const missedPlants = () => quiz.missed.filter(id => byId(id));
 
 /* ============================ para ihop ============================ */
 const PARTYPER = {
@@ -941,7 +1437,7 @@ function tapPara(b) {
 /* ============================ känn igen (bilder) ============================ */
 let bild = { ordning: [], i: 0, score: 0, answered: false };
 function viewBild() {
-  const withImg = VAXTER.filter(img);
+  const withImg = VAXTER.filter(p => kannIgenPhotos(p).length);   // plants with at least one recognisable photo
   if (withImg.length < 4) { app.innerHTML = `<div class="card"><h2>📷 Känn igen växten</h2><p>Det finns inga bilder ännu.</p></div>`; return; }
   bild = { ordning: shuffle(withImg.map(p => p.id)), i: 0, score: 0, answered: false };
   renderBild();
@@ -953,19 +1449,22 @@ function renderBild() {
     return;
   }
   const p = byId(bild.ordning[bild.i]);
-  app.innerHTML = `<div class="card">
+  // a random one of the plant's photos; a photo of another course species (e.g. P. edulis) asks for that species
+  const ph = pick(kannIgenPhotos(p));   // only photos you can recognise the plant from
+  const target = ph.art ? { ...p, latin: ph.art, latinAlt: [], latinArter: [] } : p;
+  app.innerHTML = `<div class="card wide">
     <p class="small muted">Bild ${bild.i + 1} av ${bild.ordning.length} · ${bild.score} rätt</p>
     <div class="progress"><div style="width:${bild.i / bild.ordning.length * 100}%"></div></div>
-    <img class="photo" src="${img(p).src}" alt="Vilken växt är detta?">
-    <div class="q-text" style="margin-top:.8rem">Vilken växt är detta?</div>
+    <div class="qa-split"><div><img class="photo" src="${ph.src}" alt="Vilken växt är detta?"></div>
+    <div><div class="q-text" style="margin-top:.8rem">Vilken växt är detta?</div>
     ${typeFormHTML()}
-    <div id="bfb"></div></div>`;
+    <div id="bfb"></div></div></div></div>`;
   wireTypeForm(input => {
-    const res = checkLatin(input.value, p); if (res.ok) bild.score++;
+    const res = checkLatin(input.value, target, true); if (res.ok) bild.score++;
+    logResult(p.id, res.ok);
     input.classList.add(res.ok ? 'ok' : 'bad');
-    const im = img(p);
-    $('#bfb').innerHTML = typedFeedbackHTML(res, p) + `
-      <div class="credit">Foto: ${im.foto}, <a href="${im.kalla}" target="_blank" rel="noopener">${im.licens}</a>, via Wikimedia Commons</div>
+    $('#bfb').innerHTML = typedFeedbackHTML(res, target) + `
+      <div class="credit">${creditHTML(ph)}</div>
       <div class="btn-row"><button class="btn btn-main" id="bnext">${bild.i + 1 < bild.ordning.length ? 'Nästa bild ➜' : 'Se resultat ➜'}</button></div>`;
     $('#bnext').addEventListener('click', () => { bild.i++; renderBild(); window.scrollTo(0, 0); });
     $('#bnext').focus({ preventScroll: true });
@@ -1016,6 +1515,85 @@ senna: { foto: "Lalithamba from India", licens: "CC BY 2.0", kalla: "https://com
 valeriana: { foto: "Ivar Leidus", licens: "CC BY-SA 4.0", kalla: "https://commons.wikimedia.org/wiki/File:Valeriana_officinalis_-_Niitv%C3%A4lja.jpg",
   src: 'data:image/jpeg;base64,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' },
 /*BILDER-SLUT*/
+};
+
+/* EXTRA PHOTOS: separate files in the img/ folder next to this page (upload that folder too).
+   They appear as thumbnails under each plant's main photo, and in "Känn igen".
+   art = the photo shows another course species; in "Känn igen" that species is the right answer.
+   kannIgen: false = shown in Fakta only, never in "Känn igen" (a leaf, root or dried drug you can't recognise the plant from). */
+const EXTRA_BILDER = {
+  atropa: [
+    { src: 'img/atropa-3.jpg', text: 'Blad och en klockformad, brunviolett blomma.', foto: "Krzysztof Ziarnek, Kenraiz", licens: 'CC BY-SA 4.0', kalla: "https://commons.wikimedia.org/wiki/File:Atropa_belladonna_kz02.jpg" }
+  ],
+  cannabis: [
+    { src: 'img/cannabis-3.jpg', kannIgen: false, text: 'Det typiska handflikiga bladet.', foto: "G.prügel", licens: 'CC0', kalla: "https://commons.wikimedia.org/wiki/File:Hemp_Leaf_High_Resolution.jpg" }
+  ],
+  curcuma: [
+    { src: 'img/curcuma-2.jpg', kannIgen: false, text: 'Färska rhizom (jordstammar), drogen. De genomskurna visar den gula färgen från curcumin.', foto: "Lavinia Engelbrecht", licens: 'CC BY-SA 4.0', kalla: "https://commons.wikimedia.org/wiki/File:Turmeric_rhizomes.jpg" },
+    { src: 'img/curcuma-3.jpg', kannIgen: false, text: 'Rhizom och malen gurkmeja, använd som krydda och gult färgämne (E100).', foto: "Simon A. Eugster", licens: 'CC BY-SA 3.0', kalla: "https://commons.wikimedia.org/wiki/File:Curcuma_longa_roots.jpg" }
+  ],
+  digitalis: [
+    { src: 'img/digitalis-2.jpg', text: 'Blomställning med hängande, klockformade blommor (här en ljus form).', foto: "Jörg Hempel", licens: 'CC BY-SA 3.0 de', kalla: "https://commons.wikimedia.org/wiki/File:Digitalis_purpurea_LC0118.jpg" },
+    { src: 'img/digitalis-3.jpg', text: 'Närbild av blommorna med det prickiga svalget.', foto: "Andy Morffew from Itchen Abbas, Hampshire, UK", licens: 'CC BY 2.0', kalla: "https://commons.wikimedia.org/wiki/File:Digitalis_purpurea_(foxglove)_(49891031752).jpg" }
+  ],
+  echinacea: [
+    { src: 'img/echinacea-2.jpg', text: 'Blomkorg med rosa, nedåtböjda strålblommor och en kägelformad, taggig mitt.', foto: "James St. John", licens: 'CC BY 2.0', kalla: "https://commons.wikimedia.org/wiki/File:Echinacea_purpurea_(purple_coneflowers)_1_(39444960851).jpg" }
+  ],
+  ephedra: [
+    { src: 'img/ephedra-2.jpg', text: 'Låg buske med gröna, nästan bladlösa stjälkar. Det är dessa som skördas (herba).', foto: "Krzysztof Ziarnek, Kenraiz", licens: 'CC BY-SA 4.0', kalla: "https://commons.wikimedia.org/wiki/File:Ephedra_sinica_kz01.jpg" },
+    { src: 'img/ephedra-3.jpg', kannIgen: false, text: 'Torkad drog, ma huang (麻黄), i burk.', foto: "Hanabishi", licens: 'CC BY-SA 3.0', kalla: "https://commons.wikimedia.org/wiki/File:Maou.jpg" }
+  ],
+  harpago: [
+    { src: 'img/harpago-2.jpg', kannIgen: false, text: 'Frukten med sina krokar, som gett växten namnet djävulsklo. Drogen är dock roten.', foto: "Roger Culos", licens: 'CC BY-SA 3.0', kalla: "https://commons.wikimedia.org/wiki/File:Harpagophytum_procumbens_MHNT.BOT.2005.0.1243.jpg" },
+    { src: 'img/harpago-3.jpg', kannIgen: false, text: 'Torkad frukt på marken i Kalahari.', foto: "SAplants", licens: 'CC BY-SA 4.0', kalla: "https://commons.wikimedia.org/wiki/File:Harpagophytum_procumbens_1DS-II_2-2169.jpg" }
+  ],
+  hedera: [
+    { src: 'img/hedera-2.jpg', text: 'Blommande gren med klotformade flockar och unga frukter. Blommande skott har hela, oflikade blad, till skillnad från de flikiga bladen på klättrande skott.', foto: "Bramfab", licens: 'CC BY-SA 4.0', kalla: "https://commons.wikimedia.org/wiki/File:Hedera_helix_berries.jpg" }
+  ],
+  hypericum: [
+    { src: 'img/hypericum-2.jpg', kannIgen: false, text: 'Blad mot ljuset: de genomskinliga oljekörtlarna syns som ljusa prickar (därav namnet <i>perforatum</i>, ”genomborrad”).', foto: "Harry Rose from South West Rocks, Australia", licens: 'CC BY 2.0', kalla: "https://commons.wikimedia.org/wiki/File:Hypericum_perforatum_leaf_glands1_(14629230171).jpg" },
+    { src: 'img/hypericum-3.jpg', kannIgen: false, text: 'Blad i genomfallande ljus: ljusa, genomskinliga oljekörtlar och svarta körtlar längs kanten, som innehåller hypericin.', foto: "Stefan.lefnaer", licens: 'CC BY-SA 4.0', kalla: "https://commons.wikimedia.org/wiki/File:Hypericum_perforatum_sl20.jpg" }
+  ],
+  panax: [
+    { src: 'img/panax-3.jpg', kannIgen: false, text: 'Roten, drogen <i>Ginseng radix</i>.', foto: "국립국어원", licens: 'CC BY-SA 2.0 kr', kalla: "https://commons.wikimedia.org/wiki/File:Insam_(ginseng).jpg" }
+  ],
+  papaver: [
+    { src: 'img/papaver-2.jpg', text: 'Omogna kapslar. På den främre kapseln syns ritsar där latexen (opium) har trängt ut.', foto: "George Chernilevsky", licens: 'CC BY-SA 4.0', kalla: "https://commons.wikimedia.org/wiki/File:Papaver_somniferum_2021_G3.jpg" }
+  ],
+  passiflora: [
+    { src: 'img/passiflora-2.jpg', text: '<i>Passiflora edulis</i> (passionsfrukt): blomma med trådlik bikrona.', foto: "Heydew", licens: 'CC BY-SA 4.0', kalla: "https://commons.wikimedia.org/wiki/File:Passiflora_edulis_flower_and_fruit.jpg", art: 'Passiflora edulis' },
+    { src: 'img/passiflora-3.jpg', kannIgen: false, text: '<i>Passiflora edulis</i>: genomskuren frukt, passionsfrukt.', foto: "Alexander Klink", licens: 'CC BY 3.0', kalla: "https://commons.wikimedia.org/wiki/File:Passiflora_Edulis_Open_Fruit2.jpg", art: 'Passiflora edulis' }
+  ],
+  plantago: [
+    { src: 'img/plantago-3.jpg', text: 'Liten ettårig ört med smala blad och korta ax, där fröna bildas.', foto: "Krzysztof Ziarnek, Kenraiz", licens: 'CC BY-SA 4.0', kalla: "https://commons.wikimedia.org/wiki/File:Plantago_ovata_kz15.jpg" }
+  ],
+  senna: [
+    { src: 'img/senna-2.jpg', text: 'Blommande buske med gula blommor och parbladiga blad.', foto: "Krzysztof Ziarnek, Kenraiz", licens: 'CC BY-SA 4.0', kalla: "https://commons.wikimedia.org/wiki/File:Senna_alexandrina_kz01.jpg" },
+    { src: 'img/senna-3.jpg', kannIgen: false, text: 'Torkade småblad, drogen <i>Sennae folium</i>. Kursens drog är frukterna, <i>Sennae fructus</i>.', foto: "Fumikas Sagisavas", licens: 'CC0', kalla: "https://commons.wikimedia.org/wiki/File:Dried_senna_alexandrina_leaf.jpg" }
+  ],
+  valeriana: [
+    { src: 'img/valeriana-2.jpg', kannIgen: false, text: 'Torkad rot i bitar, drogen <i>Valerianae radix</i>.', foto: "3268zauber", licens: 'CC BY-SA 3.0', kalla: "https://commons.wikimedia.org/wiki/File:Baldrianwurzel_getrocknet.JPG" }
+  ]
+};
+
+/* What each MAIN photo (the embedded one above) shows, shown with its credit. */
+const HUVUDBILD_TEXT = {
+  atropa: 'Mogna, glänsande svarta bär med den kvarsittande stjärnformade fodern.',
+  cannabis: 'Blommande topp med handflikiga blad.',
+  curcuma: 'Blomställning med ljusgröna högblad och en gul blomma.',
+  digitalis: 'Blommande växt i skogsbryn.',
+  echinacea: 'Blommande bestånd: rosa strålblommor kring en orange, kägelformad mitt.',
+  ephedra: 'Gröna, nästan bladlösa stjälkar med små kottar.',
+  ginkgo: 'De solfjäderformade, tvåflikiga bladen (här i höstfärg). Torkade blad är drogen.',
+  harpago: 'Krypande växt på sandmark, med flikiga blad och rosa blommor.',
+  hedera: 'Klättrande murgröna med de typiska flikiga bladen. Bladen är drogen.',
+  hypericum: 'Gula blommor och knoppar.',
+  panax: 'Handflikiga blad och klustrade röda bär.',
+  papaver: 'Röda blommor med mörk fläck vid kronbladens bas, och omogna kapslar.',
+  passiflora: '<i>Passiflora incarnata</i>: blomma med trådlik, lila bikrona.',
+  plantago: 'Hela växten med smala blad och ax.',
+  senna: 'Blommande planta med gula blommor och parbladiga blad.',
+  valeriana: 'Blomställning med små, ljusrosa blommor.'
 };
 </script>
 </body>
