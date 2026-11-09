@@ -1276,7 +1276,10 @@ const saveQuizVal = () => store.set('quizval', { temas: quiz.temas, antal: quiz.
 function toggleTema(k) {
   const on = quiz.temas.includes(k);
   if (on && quiz.temas.length === 1) return;          // at least one theme stays ticked
-  quiz.temas = on ? quiz.temas.filter(x => x !== k) : [...quiz.temas, k];
+  // "Blandat" already mixes everything: ticking it clears the others, and ticking another theme clears it
+  quiz.temas = on ? quiz.temas.filter(x => x !== k)
+    : k === 'blandat' ? ['blandat']
+    : [...quiz.temas.filter(x => x !== 'blandat'), k];
   saveQuizVal(); viewQuiz();
 }
 const temaNamn = () => quiz.temas.map(k => TEMAN[k].namn).join(', ');
