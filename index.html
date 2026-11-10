@@ -1416,15 +1416,47 @@ function makeQuestions(tema, n, pool = VAXTER, typer = TEMAN[tema].typer) {
     if (q.plant === undefined) q.plant = p.id;           // (rules questions set q.plant themselves: the product's plant, or null)
     q.typ = t; if (q.opts) q.opts = shuffle(q.opts); cand.push(q);
   }
-  // 2. …then pick n of them, each with a chance proportional to its weight
-  const vikter = store.get('qvikt', {}), out = [];
-  while (out.length < n && cand.length) {
-    const tot = cand.reduce((s, q) => s + (vikter[q.key] || 1), 0);
-    let r = Math.random() * tot, i = 0;
-    for (; i < cand.length - 1; i++) { r -= vikter[cand[i].key] || 1; if (r <= 0) break; }
-    out.push(cand.splice(i, 1)[0]);
+  // 2. …then pick n of them, each with a chance proportional to its weight.
+  //    Each plant gets at most its fair share of the round (10 questions, 16 plants → 1 each),
+  //    so the same plant doesn't come up again and again; only if that leaves too few is the limit lifted.
+  const vikter = store.get('qvikt', {}), out = [], perVaxt = {};
+  const tak = Math.ceil(n / new Set(pool.map(p => p.id)).size);
+  for (const medTak of [true, false]) {
+    while (out.length < n) {
+      const ok = cand.filter(q => !medTak || !q.plant || (perVaxt[q.plant] || 0) < tak);
+      if (!ok.length) break;
+      const tot = ok.reduce((s, q) => s + (vikter[q.key] || 1), 0);
+      let r = Math.random() * tot, i = 0;
+      for (; i < ok.length - 1; i++) { r -= vikter[ok[i].key] || 1; if (r <= 0) break; }
+      const q = ok[i];
+      cand.splice(cand.indexOf(q), 1); out.push(q);
+      if (q.plant) perVaxt[q.plant] = (perVaxt[q.plant] || 0) + 1;
+    }
   }
   return out;
+}
+/* Put the round in an order where the same plant (and the same kind of question) comes as far apart as possible,
+   e.g. "write the Latin name of Ephedra sinica" is not followed by "pick Ephedra sinica from the list". */
+function sprid(qs) {
+  const kvar = [...qs], ut = [], senast = {}, antal = {};
+  const vkey = (q, i) => q.plant || 'ingen-vaxt-' + i;          // questions without a plant (rules) never clash
+  kvar.forEach((q, i) => { q._v = vkey(q, i); antal[q._v] = (antal[q._v] || 0) + 1; });
+  // a plant with 2 questions in a round of 20 should come every 10th question, one with 3 every 6th, and so on
+  const steg = {};
+  for (const v in antal) steg[v] = Math.max(1, Math.floor(qs.length / antal[v]));
+  while (kvar.length) {
+    const pos = ut.length, forra = ut[pos - 1];
+    let bast = null, bastPoang = -1;
+    for (const q of kvar) {
+      const redo = senast[q._v] === undefined ? 1 : Math.min(1, (pos - senast[q._v]) / steg[q._v]);
+      const poang = redo * 1000 + antal[q._v] * 20 + (forra && forra.typ === q.typ ? 0 : 5) + Math.random();
+      if (poang > bastPoang) { bastPoang = poang; bast = q; }
+    }
+    kvar.splice(kvar.indexOf(bast), 1); ut.push(bast);
+    senast[bast._v] = pos; antal[bast._v]--;
+  }
+  ut.forEach(q => delete q._v);
+  return ut;
 }
 function loadQuizVal() {
   const v = store.get('quizval', null);
@@ -1480,7 +1512,7 @@ function startFokus(ids) {
   if (!pool.length) return;
   const typer = TEMAN.blandat.typer.filter(t => !['klassPreparat', 'regel', 'kontrast'].includes(t));   // only questions about the chosen plants
   go('quiz');
-  quiz.qs = blandaInLatin(blandaInFritext(makeQuestions('blandat', quiz.antal, pool, typer), pool), pool, ['blandat']); quiz.i = 0; quiz.score = 0; quiz.missed = []; quiz.answered = false; quiz.fokus = ids;
+  quiz.qs = sprid(blandaInLatin(blandaInFritext(makeQuestions('blandat', quiz.antal, pool, typer), pool), pool, ['blandat'])); quiz.i = 0; quiz.score = 0; quiz.missed = []; quiz.answered = false; quiz.fokus = ids;
   renderQ();
 }
 /* Written answers can't be skipped: in themes marked skrivkrav (where the exam expects a written answer),
@@ -1493,8 +1525,12 @@ function blandaIn(qs, pool, typer, andel, skydda = []) {
   const har = qs.filter(q => typer.includes(q.typ)).length;
   if (har >= quota) return qs;
   const finns = new Set(qs.map(q => q.key));
-  const nya = makeQuestions(null, quota * 3, pool, typer).filter(q => !finns.has(q.key)).slice(0, quota - har);
   const platser = shuffle(qs.map((q, i) => i).filter(i => !typer.includes(qs[i].typ) && !skydda.includes(qs[i].typ)));
+  const ersatts = new Set(platser.slice(0, quota - har));
+  // prefer plants that aren't in the round already, so the swapped-in question doesn't repeat a plant
+  const iRundan = new Set(qs.filter((q, i) => !ersatts.has(i)).map(q => q.plant));
+  const nya = makeQuestions(null, quota * 4, pool, typer).filter(q => !finns.has(q.key))
+    .sort((a, b) => iRundan.has(a.plant) - iRundan.has(b.plant)).slice(0, quota - har);
   nya.forEach((q, j) => { if (platser[j] !== undefined) qs[platser[j]] = q; });
   return qs;
 }
@@ -1511,6 +1547,7 @@ function startQuiz() {
   // only themes where the exam expects a written answer (medicinal use) get the guaranteed written questions
   if (quiz.temas.some(k => TEMAN[k].skrivkrav)) quiz.qs = blandaInFritext(quiz.qs, VAXTER);
   quiz.qs = blandaInLatin(quiz.qs, VAXTER, quiz.temas);   // and typed Latin names where the theme has them
+  quiz.qs = sprid(quiz.qs);                                // same plant / same kind of question as far apart as possible
   if (!quiz.qs.length) {
     app.innerHTML = `<div class="card"><h2>Inga frågor</h2><p>De kemiska strukturerna kunde inte laddas. Kontrollera internetanslutningen och ladda om sidan, eller välj ett annat tema.</p><div class="btn-row"><button class="btn" onclick="viewQuiz()">Byt tema</button></div></div>`;
     return;
