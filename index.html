@@ -625,6 +625,33 @@ const BIOSYNTES = {
   valerensyra:    { klass: 'seskviterpen', vagar: ['ISO'], not: 'C15-terpen med en karboxylsyra.' },
   valerinsyra:    { klass: 'kortkedjig fettsyra', vagar: ['ALK'], not: 'Bildas från leucin.' }
 };
+/* HOW TO TELL APART two structures from the SAME plant. Shown when a student picks the wrong one of the two
+   in a structure question ("Du valde morfin, som också finns i … men rätt svar var kodein. …").
+   Key = the two structure ids, in alphabetical order, joined with |. */
+const SKILLNADER = {
+  'atropin|hyoscyamin': 'Strukturen: atropin är samma molekyl som (–)-hyoscyamin, men som racemat, en blandning av (–)- och (+)-formen. Därför ser strukturerna likadana ut, men atropin har ingen kil vid tropasyrans kolatom. Effekten: bara (–)-formen är aktiv.',
+  'hyoscyamin|skopolamin': 'Strukturen: skopolamin har en epoxidbrygga (en extra syreatom i en tredelad ring) på tropanringen, som hyoscyamin saknar. Effekten: skopolamin används mot åksjuka.',
+  'atropin|skopolamin': 'Strukturen: skopolamin har en epoxidbrygga (en extra syreatom i en tredelad ring) på tropanringen, som atropin saknar; atropin är ett racemat av hyoscyamin. Effekten: skopolamin används mot åksjuka.',
+  'cbd|thc': 'Strukturen: i THC är den mittersta ringen sluten med en syreatom, så THC har tre ringar och en OH-grupp. I CBD är den ringen öppen, så CBD har två OH-grupper på bensenringen. Effekten: CBD saknar berusande effekter, THC är berusande.',
+  'digitoxin|digoxin': 'Strukturen: digoxin har en extra OH-grupp på steroidskelettet, som digitoxin saknar. Laktonringen och sockerkedjan är desamma.',
+  'alkylamid|echinakosid': 'Strukturen: echinakosid är en stor fenol med sockerenheter (därför vattenlöslig). Alkylamiden är en rak, omättad kolkedja med en amidgrupp (C(=O)NH), utan socker och utan ringar.',
+  'efedrin|pseudoefedrin': 'Strukturen: de har samma atomer och bindningar och skiljer sig bara i konfigurationen vid kolatomen som bär OH-gruppen; de är diastereomerer. Titta på kilen vid OH-gruppen.',
+  'ginkgolidA|ginkgolidB': 'Strukturen: ginkgolid B har en extra OH-grupp, som ginkgolid A saknar. Effekten: ginkgolid B är en antagonist vid PAF-receptorn.',
+  'bilobalid|ginkgolidA': 'Strukturen: bilobalid är mindre, en seskviterpen (C15), medan ginkgoliderna är diterpener (C20). Båda är terpenlaktoner med en tert-butylgrupp, men bilobalid har färre ringar.',
+  'bilobalid|ginkgolidB': 'Strukturen: bilobalid är mindre, en seskviterpen (C15), medan ginkgoliderna är diterpener (C20). Båda är terpenlaktoner med en tert-butylgrupp, men bilobalid har färre ringar.',
+  'hyperforin|hypericin': 'Strukturen: hypericin är ett stort, platt ringsystem (naftodiantron) med många OH-grupper. Hyperforin har en burformad kärna (acylfloroglucinol) med flera prenylkedjor. Effekten: hypericin är fototoxiskt; hyperforin står för CYP3A-induktionen (interaktionerna) och aktiverar TRPC6.',
+  'amentoflavon|hypericin': 'Strukturen: amentoflavon är två flavonenheter (biflavonoid) som sitter ihop med en enkel bindning; varje halva har en ring med en syreatom. Hypericin är ett enda sammanhängande, platt ringsystem utan syre i ringarna (naftodiantron).',
+  'amentoflavon|hyperforin': 'Strukturen: amentoflavon är två platta flavonenheter med OH-grupper och inga kolkedjor. Hyperforin har en burformad kärna med flera prenylkedjor. Effekten: hyperforin står för CYP3A-induktionen (interaktionerna).',
+  'kodein|morfin': 'Strukturen: kodein har en metoxigrupp (OCH₃) där morfin har en fenolisk OH-grupp; resten är detsamma. Effekten: morfin är smärtstillande, kodein potentierande.',
+  'morfin|noskapin': 'Strukturen: noskapin har inte morfinets stela ringskelett, utan två ringdelar som sitter ihop med en enkel bindning, flera metoxigrupper och en laktonring. Effekten: morfin är smärtstillande, noskapin hostdämpande.',
+  'kodein|noskapin': 'Strukturen: noskapin har inte kodeinets (morfinets) stela ringskelett, utan två ringdelar som sitter ihop med en enkel bindning, flera metoxigrupper och en laktonring. Effekten: kodein är potentierande, noskapin hostdämpande.',
+  'morfin|papaverin': 'Strukturen: papaverin är platt, med två aromatiska ringdelar som sitter ihop via en CH₂, fyra metoxigrupper och inga OH-grupper. Morfin har ett stelt ringskelett med två OH-grupper. Effekten: morfin är smärtstillande, papaverin kramplösande.',
+  'kodein|papaverin': 'Strukturen: papaverin är platt, med två aromatiska ringdelar som sitter ihop via en CH₂ och fyra metoxigrupper. Kodein har morfinets stela ringskelett. Effekten: kodein är potentierande, papaverin kramplösande.',
+  'noskapin|papaverin': 'Strukturen: papaverin är helt aromatiskt och platt (kvävet sitter i en aromatisk ring, utan metylgrupp). Noskapin har ett kväve med metylgrupp i en mättad ring, plus en laktonring. Effekten: noskapin är hostdämpande, papaverin kramplösande.',
+  'rheinantron|sennosidA': 'Strukturen: sennosid A är en diantronglykosid, två antronenheter som sitter ihop, med glukos. Rheinantron är en enda antronenhet utan socker. Effekten: sennosiderna spjälkas i tarmen till rheinantron, som är den aktiva formen.',
+  'valerensyra|valerinsyra': 'Strukturen: valerensyra är en seskviterpen (C15) med ringar och en karboxylsyra; valerinsyra är en liten fettsyra utan ringar. Effekten: valerensyra modulerar GABA<sub>A</sub>-receptorer (lugnande), valerinsyra står för vänderotens speciella doft.'
+};
+const skillnad = (a, b) => SKILLNADER[[a, b].sort().join('|')] || '';
 const vagText = s => (BIOSYNTES[s.id] ? BIOSYNTES[s.id].vagar.map(v => VAGNAMN[v]).join(' + ') : '');
 const bioLine = s => BIOSYNTES[s.id] ? `<span class="bio">${BIOSYNTES[s.id].klass} · ${vagText(s)}</span><span class="bio bio-not">${BIOSYNTES[s.id].not}</span>` : '';
 // link straight to the plant's page in Kew's Plants of the World Online (the database used in the seminar).
@@ -1054,6 +1081,10 @@ function viewGranskning() {
     <section class="card gplant"><h2>Regler: VBL och TVBL</h2>
       <h3>Regelfrågor</h3><ol>${regler}</ol>
       <h3>Preparat och läkemedelsklass</h3><ul>${klasser}</ul>
+    </section>
+    <section class="card gplant"><h2>Förklaringar vid fel struktur från samma växt</h2>
+      <p class="small muted">Visas i quizet när studenten väljer fel substans men från rätt växt, t.ex. morfin i stället för kodein.</p>
+      <ul>${Object.entries(SKILLNADER).map(([k, t]) => `<li><b>${k.split('|').map(id => STRUKT[id].namn).join(' / ')}</b>: ${t}</li>`).join('')}</ul>
     </section>`;
 }
 /* Is the student in the middle of a round (has answered something, but not finished)?
@@ -1682,8 +1713,12 @@ function choiceInfo(q, key) {
   }
   const s = STRUKT[key];                     // the option was a structure (by name or by picture)
   if (s) {
-    const src = byId(s.vaxt);
-    return `Du valde <b>${s.namn}</b>, som finns i ${plantLink(src)}.` +
+    const src = byId(s.vaxt), r = STRUKT[q.right];
+    // same plant as the right answer: say so, and explain how the two structures differ
+    const text = r && r.vaxt === s.vaxt
+      ? `Du valde <b>${s.namn}</b>, som också finns i ${plantLink(src)}, men rätt svar var <b>${r.namn}</b>. ${skillnad(s.id, r.id)}`
+      : `Du valde <b>${s.namn}</b>, som finns i ${plantLink(src)}.`;
+    return text +
       (q.typ === 'strukturNamn' ? `<div style="max-width:280px;margin-top:.5rem">${molDiv(s.id)}</div><span class="small">Så här ser ${s.namn} ut. Jämför med strukturen i frågan.</span>` : '');
   }
   // the option was a substance, family, plant part or safety point: say which plant(s) it belongs to
