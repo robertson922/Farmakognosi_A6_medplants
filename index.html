@@ -1056,7 +1056,21 @@ function viewGranskning() {
       <h3>Preparat och läkemedelsklass</h3><ul>${klasser}</ul>
     </section>`;
 }
+/* Is the student in the middle of a round (has answered something, but not finished)?
+   Then the top buttons ask before leaving, so a round isn't lost by a mis-tap. */
+function pagaendeOmgang() {
+  const v = app.dataset.view;
+  if (v === 'quiz') return !!$('#app .q-text') && quiz.i < quiz.qs.length && (quiz.i > 0 || quiz.answered);
+  if (v === 'kort') return !!$('#app .flash') && kort.i < kort.deck.length && (kort.i > 0 || kort.flipped);
+  if (v === 'para') return para.kvar > 0 && (para.kvar < para.left.length || para.fel > 0);
+  if (v === 'bild') return bild.i < bild.ordning.length && (bild.i > 0 || bild.answered);
+  return false;
+}
+const LAMNA_TEXT = 'Du är mitt i en omgång. Vill du lämna den?\n\nOmgången avbryts och du kan inte fortsätta där du var.';
+// closing the tab, reloading or the phone's back button: the browser shows its own warning
+window.addEventListener('beforeunload', e => { if (pagaendeOmgang()) { e.preventDefault(); e.returnValue = ''; } });
 function go(v) {
+  if (pagaendeOmgang() && !confirm(LAMNA_TEXT)) return;
   if (!VIEWS[v]) v = 'hem';
   document.body.dataset.view = v;            // lets the phone layout hide the Start button on the start page
   app.dataset.view = v;                      // lets the desktop layout pick a width per view
